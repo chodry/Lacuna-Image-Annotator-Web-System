@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     HomePageView, CountryCreateView, LandingPageView,
-    UploadCreateView, UploadListView,
+    UploadCreateView, UploadListView, UploadAssignView,
     LeaderCreateView, LeaderListView,
     AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView
 )
@@ -12,6 +12,7 @@ urlpatterns = [
     path('country/', CountryCreateView.as_view(), name='country'),
     path('upload/', UploadCreateView.as_view(), name='upload'),
     path('upload_list/', UploadListView.as_view(), name='upload_list'),
+    path('<int:pk>/upload_assign/', UploadAssignView.as_view(), name='upload_assign'),
     path('leader/', LeaderListView.as_view(), name='leaders_list'),
     path('create/', LeaderCreateView.as_view(), name='leaders_create'),
     path('annotator', AnnotatorListView.as_view(), name='annotators_list'),

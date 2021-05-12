@@ -4,7 +4,13 @@
      <a href="{% url 'upload' %}">Upload batches</a>
     <ul>
         {% for upload in uploads %}
-            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }} <a href="#">Assign Annotator</a></li>
+            {% if request.user.is_admin%}
+            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}</li>
+            {% else %}
+            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}
+                <a href="{% url 'upload_assign' upload.pk %}">Assign Annotator</a>
+            </li>
+            {% endif %}
         {% endfor %}
     </ul>
 

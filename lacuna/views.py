@@ -119,15 +119,22 @@ class UploadListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         upload = self.request.user.country
-        return Upload.objects.filter(country=upload)
+        if upload == None:
+            return Upload.objects.all()
+        else:
+            return Upload.objects.filter(country=upload)
 
 
 class UploadAssignView(LoginRequiredMixin, UpdateView):
-    template_name = "upload_update.html"
+    template_name = "upload_assign.html"
     fields = ('assigned',)
     success_url = reverse_lazy('upload_list')
 
     def get_queryset(self):
-        upload = self.request.user.country
-        queryset = Upload.objects.filter(country=upload)
+        leader = self.request.user.leader
+        print(leader)
+        annotator = Annotator.objects.filter(leader=leader)
+        print(annotator)
+        queryset = Upload.objects.all()
+        # queryset = Annotator.objects.filter(leader=leader)
         return queryset
