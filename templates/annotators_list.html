@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Annotators</h1>
+     <a href="{% url 'annotator_create' %}">Create Annotator</a>
+    <ul>
+        {% for annotator in annotators %}
+            <li>{{ annotator.user.username }} {{ annotator.user.email }} {{ annotator.user.country }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

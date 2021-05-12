@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Batch Uploads</h1>
+     <a href="{% url 'upload' %}">Upload batches</a>
+    <ul>
+        {% for upload in uploads %}
+            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }} <a href="#">Assign Annotator</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock content %}

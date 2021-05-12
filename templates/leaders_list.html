@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Team Leaders</h1>
+     <a href="{% url 'leaders_create' %}">Create Team Leader</a>
+    <ul>
+        {% for leader in leaders %}
+            <li>{{ leader.user.username }} {{ leader.user.email }} {{ leader.user.country }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock content %}

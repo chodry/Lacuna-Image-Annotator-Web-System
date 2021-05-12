@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Home Page</h1>
+    {% if request.user.is_admin %}
+        <p><a href="{% url 'leaders_list' %}">Team Leaders</a></p>
+        <p><a href="{% url 'country' %}">Countries</a></p>
+        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>
+    {% elif request.user.is_leader %}
+        <a href="{% url 'annotators_list' %}">Annotators</a>
+        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>
+    {% else %}
+        <a href="{% url 'annotators_home' %}">Annotate Images</a>
+    {% endif %}
+{% endblock content %}
