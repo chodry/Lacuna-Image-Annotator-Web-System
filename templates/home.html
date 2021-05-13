@@ -1,14 +1,185 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Home Page</h1>
-    {% if request.user.is_admin %}
-        <p><a href="{% url 'leaders_list' %}">Team Leaders</a></p>
-        <p><a href="{% url 'country' %}">Countries</a></p>
-        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>
-    {% elif request.user.is_leader %}
-        <a href="{% url 'annotators_list' %}">Annotators</a>
-        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>
-    {% else %}
-        <a href="{% url 'annotators_home' %}">Annotate Images</a>
-    {% endif %}
+<!--    <h1>Home Page</h1>-->
+<!--    {% if request.user.is_admin %}-->
+<!--        <p><a href="{% url 'leaders_list' %}">Team Leaders</a></p>-->
+<!--        <p><a href="{% url 'country' %}">Countries</a></p>-->
+<!--        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>-->
+<!--    {% elif request.user.is_leader %}-->
+<!--        <a href="{% url 'annotators_list' %}">Annotators</a>-->
+<!--        <p><a href="{% url 'upload_list' %}">Images' Urls</a></p>-->
+<!--    {% else %}-->
+<!--        <a href="{% url 'annotators_home' %}">Annotate Images</a>-->
+<!--    {% endif %}-->
+    <div id="dash">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Cassava</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">8000</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">345</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Maize</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">9800</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">1345</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Beans</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">1800</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">845</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h5>Annotators' Summaries</h5>
+            <hr>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Cassava</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Beans</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Maize</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                           <div id="tables">
+                              <table class="table table-bordered table_annotator">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th>Annotators</th>
+                                  <th colspan="2">Images</th>
+                                  <th>Assign Images</th>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <th>assigned</th>
+                                  <th>annotated</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Mutebi Chodrine</th>
+                                  <th>100</th>
+                                  <th>50</th>
+                                  <th><a href="#" class="btn btn-primary">Assign Images</a></th>
+                                </tr>
+                              </tbody>
+                              </table>
+                            </div>
+                      </div>
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div id="tables">
+                              <table class="table table-bordered table_annotator">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th>Annotators</th>
+                                  <th colspan="2">Images</th>
+                                  <th>Assign Images</th>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <th>assigned</th>
+                                  <th>annotated</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Mutebi Chodrine</th>
+                                  <th>100</th>
+                                  <th>50</th>
+                                  <th><a href="#" class="btn btn-primary">Assign Images</a></th>
+                                </tr>
+                              </tbody>
+                              </table>
+                            </div>
+                      </div>
+                      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                          <div id="tables">
+                              <table class="table table-bordered table_annotator">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th>Annotators</th>
+                                  <th colspan="2">Images</th>
+                                  <th>Assign Images</th>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <th>assigned</th>
+                                  <th>annotated</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th>Mutebi Chodrine</th>
+                                  <th>100</th>
+                                  <th>50</th>
+                                  <th><a href="#" class="btn btn-primary">Assign Images</a></th>
+                                </tr>
+                              </tbody>
+                              </table>
+                            </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
 {% endblock content %}

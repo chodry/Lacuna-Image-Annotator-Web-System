@@ -1,9 +1,25 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
-    <h1>Create Team Leader</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Leader</button>
-    </form>
+
+    <div class="leader">
+        <h5>Create A New Team Leader</h5>
+<!--        <hr>-->
+        <div class="row" >
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-success btn-sm">Create Leader</button>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+
+
 {% endblock content %}

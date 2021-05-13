@@ -1,17 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Batch Uploads</h1>
-     <a href="{% url 'upload' %}">Upload batches</a>
-    <ul>
-        {% for upload in uploads %}
-            {% if request.user.is_admin%}
-            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}</li>
-            {% else %}
-            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}
-                <a href="{% url 'upload_assign' upload.pk %}">Assign Annotator</a>
-            </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+<!--    <h1>Batch Uploads</h1>-->
+<!--     <a href="{% url 'upload' %}">Upload batches</a>-->
+<!--    <ul>-->
+<!--        {% for upload in uploads %}-->
+<!--            {% if request.user.is_admin%}-->
+<!--            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}</li>-->
+<!--            {% else %}-->
+<!--            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}-->
+<!--                <a href="{% url 'upload_assign' upload.pk %}">Assign Annotator</a>-->
+<!--            </li>-->
+<!--            {% endif %}-->
+<!--        {% endfor %}-->
+<!--    </ul>-->
 
+    <div class="header">
+        <h5>Batches</h5>
+        <hr>
+        {% if request.user.is_admin %}
+        <a href="{% url 'upload' %}" class="right btn btn-success btn-sm">Upload New Batch</a>
+        {% endif %}
+
+        <div class="row" style="margin-top:60px">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                       <div id="tables">
+                          <table class="table table-bordered table_annotator">
+                          <thead class="thead-light">
+                            <tr>
+                              <th>Crop</th>
+                              <th>Name</th>
+                              <th>Country</th>
+                              {% if request.user.is_leader %}
+                                <th>Assign Annotator</th>
+                                {% endif %}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for upload in uploads %}
+                            <tr>
+                              <td>{{ upload.crop }}</td>
+                              <td>{{ upload.url }}</td>
+                              <td>{{ upload.country }}</td>
+                              {% if request.user.is_leader %}
+                                <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
+                              {% endif %}
+<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                          </table>
+                        </div>
+                  </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
 {% endblock content %}

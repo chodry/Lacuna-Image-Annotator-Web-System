@@ -22,7 +22,7 @@ from django.contrib.auth.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lacuna/', include('lacuna.urls')),
+    path('', include('lacuna.urls')),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     # path('signup/', SignupView.as_view(), name='signup'),

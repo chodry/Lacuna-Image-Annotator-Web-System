@@ -135,6 +135,6 @@ class UploadAssignView(LoginRequiredMixin, UpdateView):
         print(leader)
         annotator = Annotator.objects.filter(leader=leader)
         print(annotator)
-        queryset = Upload.objects.all()
+        queryset = Upload.objects.filter(assigned=annotator)
         # queryset = Annotator.objects.filter(leader=leader)
         return queryset

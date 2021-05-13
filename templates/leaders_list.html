@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Team Leaders</h1>
-     <a href="{% url 'leaders_create' %}">Create Team Leader</a>
-    <ul>
-        {% for leader in leaders %}
-            <li>{{ leader.user.username }} {{ leader.user.email }} {{ leader.user.country }}</li>
-        {% endfor %}
-    </ul>
+
+    <div class="header">
+        <h5>Team leaders' List</h5>
+        <hr>
+        <a href="{% url 'leaders_create' %}" class="right btn btn-success btn-sm">Create Team Leader</a>
+
+        <div class="row" style="margin-top:60px">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="tab-content" id="myTabContent">
+                  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                       <div id="tables">
+                          <table class="table table-bordered table_annotator">
+                          <thead class="thead-light">
+                            <tr>
+                              <th>Username</th>
+                              <th>Email</th>
+                              <th>Country</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for leader in leaders %}
+                            <tr>
+                              <td>{{ leader.user.username }}</td>
+                              <td>{{ leader.user.email }}</td>
+                              <td>{{ leader.user.country }}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                          </table>
+                        </div>
+                  </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
 
 {% endblock content %}
