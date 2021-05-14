@@ -126,6 +126,10 @@ main .card {
     float: right;
 }
 
+.left {
+    float: left;
+}
+
 .leader {
     margin: 10px 500px 0px 40px;
 }

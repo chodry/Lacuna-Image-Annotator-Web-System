@@ -129,7 +129,7 @@ STATIC_ROOT = "static_root"
 
 AUTH_USER_MODEL = 'lacuna.CustomUser'
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'upload_list'
 LOGOUT_REDIRECT_URL = '/login'
 LOGIN_URL = '/login'
 

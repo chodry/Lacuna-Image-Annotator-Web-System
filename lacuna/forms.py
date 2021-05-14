@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Upload
+from .models import CustomUser, Upload, Annotator
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -32,3 +32,14 @@ class AnnotatorModelForm(forms.ModelForm):
             'email',
             'username',
         )
+
+
+class AssignAnnotatorForm(forms.Form):
+
+    assigned = forms.ModelChoiceField(queryset=Annotator.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        annotators = Annotator.objects.filter(leader=request.user.leader)
+        super(AssignAnnotatorForm, self).__init__(*args, **kwargs)
+        self.fields["assigned"].queryset = annotators

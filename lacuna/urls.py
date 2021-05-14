@@ -1,18 +1,18 @@
 from django.urls import path
 from .views import (
     HomePageView, CountryCreateView, LandingPageView,
-    UploadCreateView, UploadListView, UploadAssignView,
+    UploadCreateView, UploadListView, AssignAnnotatorView,
     LeaderCreateView, LeaderListView,
-    AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView
+    AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView,
 )
 
 urlpatterns = [
-    path('', HomePageView.as_view(), name='home'),
+    path('home', HomePageView.as_view(), name='home'),
     path('landing_page', LandingPageView.as_view(), name='landing_page'),
     path('country/', CountryCreateView.as_view(), name='country'),
     path('upload/', UploadCreateView.as_view(), name='upload'),
-    path('upload_list/', UploadListView.as_view(), name='upload_list'),
-    path('<int:pk>/upload_assign/', UploadAssignView.as_view(), name='upload_assign'),
+    path('', UploadListView.as_view(), name='upload_list'),
+    path('<int:pk>/upload_assign/', AssignAnnotatorView.as_view(), name='upload_assign'),
     path('leader/', LeaderListView.as_view(), name='leaders_list'),
     path('create/', LeaderCreateView.as_view(), name='leaders_create'),
     path('annotator', AnnotatorListView.as_view(), name='annotators_list'),

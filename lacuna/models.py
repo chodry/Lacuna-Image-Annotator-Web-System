@@ -39,11 +39,13 @@ class Annotator(models.Model):
 
 class Upload(models.Model):
     CROPS = (
-        ('cassava', 'Cassava'),
-        ('beans', 'Beans'),
-        ('maize', 'Maize'),
         ('banana', 'Banana'),
-        ('peal_millet', 'Peal Millet'),
+        ('beans', 'Beans'),
+        ('cassava', 'Cassava'),
+        ('cocoa', 'Cocoa'),
+        ('maize', 'Maize'),
+        ('pearl_millet', 'Pearl Millet'),
+
     )
     crop = models.CharField(choices=CROPS, max_length=100)
     country = models.ForeignKey(Country, models.CASCADE)

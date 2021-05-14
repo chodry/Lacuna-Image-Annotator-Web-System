@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Country, Upload, Leader, Annotator
 from django.urls import reverse_lazy
-from .forms import LeaderModelForm, AnnotatorModelForm
+from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm
 from django.core.mail import send_mail
 import random
 
@@ -117,24 +117,82 @@ class UploadListView(LoginRequiredMixin, ListView):
     template_name = 'upload_list.html'
     context_object_name = 'uploads'
 
+    def get_context_data(self, **kwargs):
+        upload = self.request.user.country
+        queryset = Upload.objects.filter(country=upload)
+        queryset2 = Upload.objects.filter(country=Country.objects.get(country='Uganda'))
+        queryset3 = Upload.objects.filter(country=Country.objects.get(country='Tanzania'))
+        queryset4 = Upload.objects.filter(country=Country.objects.get(country='Namibia'))
+        queryset5 = Upload.objects.filter(country=Country.objects.get(country='Ghana'))
+
+        context = super(UploadListView, self).get_context_data(**kwargs)
+
+        context.update({
+            "cassavaUg_uploads": queryset.filter(crop="cassava").count(),
+            "cassavaUg": queryset2.filter(crop="cassava").count(),
+            "cassavaUg_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
+            "cassavaUg_A": queryset2.filter(crop="cassava").filter(is_annotated=True).count(),
+            "cassavaTz_uploads": queryset.filter(crop="cassava").count(),
+            "cassavaTz": queryset3.filter(crop="cassava").count(),
+            "cassavaTz_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
+            "cassavaTz_A": queryset3.filter(crop="cassava").filter(is_annotated=True).count(),
+            "maizeUg_uploads": queryset.filter(crop="maize").count(),
+            "maizeUg": queryset2.filter(crop="maize").count(),
+            "maizeUg_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeUg_A": queryset2.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeTz_uploads": queryset.filter(crop="maize").count(),
+            "maizeTz": queryset3.filter(crop="maize").count(),
+            "maizeTz_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeTz_A": queryset3.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeNa_uploads": queryset.filter(crop="maize").count(),
+            "maizeNa": queryset4.filter(crop="maize").count(),
+            "maizeNa_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeNa_A": queryset4.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeGh_uploads": queryset.filter(crop="maize").count(),
+            "maizeGh": queryset5.filter(crop="maize").count(),
+            "maizeGh_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeGh_A": queryset5.filter(crop="maize").filter(is_annotated=True).count(),
+            "beans_uploads": queryset.filter(crop="beans").count(),
+            "beans": queryset2.filter(crop="beans").count(),
+            "beans_annotated": queryset.filter(crop="beans").filter(is_annotated=True).count(),
+            "beans_A": queryset2.filter(crop="beans").filter(is_annotated=True).count(),
+            "banana_uploads": queryset.filter(crop="banana").count(),
+            "bananaTz": queryset3.filter(crop="banana").count(),
+            "banana_annotated": queryset.filter(crop="banana").filter(is_annotated=True).count(),
+            "banana_A": queryset3.filter(crop="banana").filter(is_annotated=True).count(),
+            "pearl_uploads": queryset.filter(crop="pearl_millet").count(),
+            "pearl": queryset4.filter(crop="pearl_millet").count(),
+            "pearl_annotated": queryset.filter(crop="pearl_millet").filter(is_annotated=True).count(),
+            "pearl_A": queryset4.filter(crop="pearl_millet").filter(is_annotated=True).count(),
+            "cocoa_uploads": queryset.filter(crop="cocoa").count(),
+            "cocoa": queryset5.filter(crop="cocoa").count(),
+            "cocoa_annotated": queryset.filter(crop="cocoa").filter(is_annotated=True).count(),
+            "cocoa_A": queryset5.filter(crop="cocoa").filter(is_annotated=True).count(),
+        })
+
+        return context
+
     def get_queryset(self):
         upload = self.request.user.country
-        if upload == None:
-            return Upload.objects.all()
-        else:
-            return Upload.objects.filter(country=upload)
+        return Upload.objects.filter(country=upload)
 
 
-class UploadAssignView(LoginRequiredMixin, UpdateView):
+class AssignAnnotatorView(LoginRequiredMixin, FormView):
     template_name = "upload_assign.html"
-    fields = ('assigned',)
+    form_class = AssignAnnotatorForm
     success_url = reverse_lazy('upload_list')
 
-    def get_queryset(self):
-        leader = self.request.user.leader
-        print(leader)
-        annotator = Annotator.objects.filter(leader=leader)
-        print(annotator)
-        queryset = Upload.objects.filter(assigned=annotator)
-        # queryset = Annotator.objects.filter(leader=leader)
-        return queryset
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(AssignAnnotatorView, self).get_form_kwargs(**kwargs)
+        kwargs.update({
+            "request": self.request,
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        annotator = form.cleaned_data["assigned"]
+        upload = Upload.objects.get(id=self.kwargs["pk"])
+        upload.assigned = annotator
+        upload.leader = self.request.user.username
+        upload.save()
+        return super(AssignAnnotatorView, self).form_valid(form)

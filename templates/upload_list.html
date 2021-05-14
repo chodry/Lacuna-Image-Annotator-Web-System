@@ -1,30 +1,234 @@
 {% extends 'base.html' %}
 {% block content %}
-<!--    <h1>Batch Uploads</h1>-->
-<!--     <a href="{% url 'upload' %}">Upload batches</a>-->
-<!--    <ul>-->
-<!--        {% for upload in uploads %}-->
-<!--            {% if request.user.is_admin%}-->
-<!--            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}</li>-->
-<!--            {% else %}-->
-<!--            <li>{{ upload.crop }} {{ upload.url }} {{ upload.country.country }}-->
-<!--                <a href="{% url 'upload_assign' upload.pk %}">Assign Annotator</a>-->
-<!--            </li>-->
-<!--            {% endif %}-->
-<!--        {% endfor %}-->
-<!--    </ul>-->
+    {% if request.user.is_leader %}
+        <div class="row">
+              {% if request.user.country.country == 'Uganda' %}
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Cassava</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ cassavaUg_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ cassavaUg_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
-    <div class="header">
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Maize</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ maizeUg_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ maizeUg_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Beans</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ beans_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ beans_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            {% elif request.user.country.country == 'Tanzania' %}
+                <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Cassava</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ cassavaTz_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ cassavaTz_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+                <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Maize</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ maizeTz_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ maizeTz_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+                <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Banana</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ banana_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ banana_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            {% elif request.user.country.country == 'Namibia' %}
+                  <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Pearl Millet</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ pearl_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ pearl_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+                  <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Maize</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ maizeNa_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ maizeNa_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+             {% elif request.user.country.country == 'Ghana' %}
+                  <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Cocoa</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ cocoa_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ cocoa_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+                  <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Maize</h5>
+                    <table class="table_row">
+                      <tbody class="rows_tb">
+                        <tr class="rows_tr">
+                          <td class="rows_td">Images</td>
+                          <td class="rows_tds">{{ maizeGh_uploads }}</td>
+                        </tr>
+                        <tr class="rows_tr">
+                          <td class="rows_td annotated">Annotated</td>
+                          <td class="rows_tds annotated">{{ maizeGh_annotated }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+            </div>
+        <div class="header">
+
         <h5>Batches</h5>
+<!--        {% if request.user.is_admin %}-->
+<!--        <a href="{% url 'upload' %}" class="right btn btn-success btn-sm">Upload New Batch</a>-->
+<!--        {% endif %}-->
         <hr>
-        {% if request.user.is_admin %}
-        <a href="{% url 'upload' %}" class="right btn btn-success btn-sm">Upload New Batch</a>
-        {% endif %}
 
-        <div class="row" style="margin-top:60px">
+
+        <div class="row" >
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Unassigned</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Assigned</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Annotated</a>
+                      </li>
+                    </ul>
                 <div class="tab-content" id="myTabContent">
                   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                        <div id="tables">
@@ -34,33 +238,297 @@
                               <th>Crop</th>
                               <th>Name</th>
                               <th>Country</th>
-                              {% if request.user.is_leader %}
-                                <th>Assign Annotator</th>
-                                {% endif %}
+                              <th>Assign Annotator</th>
                             </tr>
                           </thead>
                           <tbody>
+
                             {% for upload in uploads %}
+                            {% if not upload.assigned %}
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
-                              {% if request.user.is_leader %}
-                                <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
-                              {% endif %}
+                              <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
+
 <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
                             </tr>
+                            {% endif %}
                             {% endfor %}
+
                           </tbody>
                           </table>
                         </div>
                   </div>
 
+                  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div id="tables">
+                          <table class="table table-bordered table_annotator">
+                          <thead class="thead-light">
+                            <tr>
+                              <th>Crop</th>
+                              <th>Name</th>
+                              <th>Country</th>
+                              <th>Annotator</th>
+                              <th>Change Annotator</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for upload in uploads %}
+                            {% if upload.assigned and not upload.is_annotated %}
+                            <tr>
+                              <td>{{ upload.crop }}</td>
+                              <td>{{ upload.url }}</td>
+                              <td>{{ upload.country }}</td>
+                              <td>{{ upload.assigned }}</td>
+                              <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Change Annotator</a></td>
+<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+                          </table>
+                        </div>
+                  </div>
+                  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                          <div id="tables">
+                          <table class="table table-bordered table_annotator">
+                          <thead class="thead-light">
+                            <tr>
+                              <th>Crop</th>
+                              <th>Name</th>
+                              <th>Country</th>
+                              <th>Annotator</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for upload in uploads %}
+                            {% if upload.is_annotated %}
+                            <tr>
+                              <td>{{ upload.crop }}</td>
+                              <td>{{ upload.url }}</td>
+                              <td>{{ upload.country }}</td>
+                              <td>{{ upload.assigned }}</td>
+<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+                          </table>
+                        </div>
+                  </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-    </div>
+
+    {% elif request.user.is_admin %}
+        <h5>Batches Summary</h5>
+        <hr>
+        <a href="{% url 'upload' %}" class="right btn btn-success btn-sm">Upload New Batch</a>
+        <div class="row" style="margin-top:40px">
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 style="font-size:12px">Cassava, Ug</h5>
+                <table class="table_row">
+                  <tbody class="rows_tb">
+                    <tr class="rows_tr">
+                      <td class="rows_td">Images</td>
+                      <td class="rows_tds">{{ cassavaUg }}</td>
+                    </tr>
+                    <tr class="rows_tr">
+                      <td class="rows_td annotated">Annotated</td>
+                      <td class="rows_tds annotated">{{ cassavaUg_A }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" style="font-size:12px">Maize, Ug</h5>
+                <table class="table_row">
+                  <tbody class="rows_tb">
+                    <tr class="rows_tr">
+                      <td class="rows_td">Images</td>
+                      <td class="rows_tds">{{ maizeUg }}</td>
+                    </tr>
+                    <tr class="rows_tr">
+                      <td class="rows_td annotated">Annotated</td>
+                      <td class="rows_tds annotated">{{ maizeUg_A }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" style="font-size:12px">Beans, Ug</h5>
+                <table class="table_row">
+                  <tbody class="rows_tb">
+                    <tr class="rows_tr">
+                      <td class="rows_td">Images</td>
+                      <td class="rows_tds">{{ beans }}</td>
+                    </tr>
+                    <tr class="rows_tr">
+                      <td class="rows_td annotated">Annotated</td>
+                      <td class="rows_tds annotated">{{ beans_A }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+              <div class="card-body">
+                <h5 style="font-size:12px">Cassava, Tz</h5>
+                <table class="table_row">
+                  <tbody class="rows_tb">
+                    <tr class="rows_tr">
+                      <td class="rows_td">Images</td>
+                      <td class="rows_tds">{{ cassavaTz }}</td>
+                    </tr>
+                    <tr class="rows_tr">
+                      <td class="rows_td annotated">Annotated</td>
+                      <td class="rows_tds annotated">{{ cassavaTz_A}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" style="font-size:12px">Maize, Tz</h5>
+                <table class="table_row">
+                  <tbody class="rows_tb">
+                    <tr class="rows_tr">
+                      <td class="rows_td">Images</td>
+                      <td class="rows_tds">{{ maizeTz }}</td>
+                    </tr>
+                    <tr class="rows_tr">
+                      <td class="rows_td annotated">Annotated</td>
+                      <td class="rows_tds annotated">{{ maizeTz_A }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title" style="font-size:12px">Banana, Tz</h5>
+            <table class="table_row">
+              <tbody class="rows_tb">
+                <tr class="rows_tr">
+                  <td class="rows_td">Images</td>
+                  <td class="rows_tds">{{ bananaTz }}</td>
+                </tr>
+                <tr class="rows_tr">
+                  <td class="rows_td annotated">Annotated</td>
+                  <td class="rows_tds annotated">{{ banana_A }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 style="font-size:12px">Pearl Millet, Na</h5>
+            <table class="table_row">
+              <tbody class="rows_tb">
+                <tr class="rows_tr">
+                  <td class="rows_td">Images</td>
+                  <td class="rows_tds">{{ pearl }}</td>
+                </tr>
+                <tr class="rows_tr">
+                  <td class="rows_td annotated">Annotated</td>
+                  <td class="rows_tds annotated">{{ pearl_A }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title" style="font-size:12px" >Maize, Na</h5>
+            <table class="table_row">
+              <tbody class="rows_tb">
+                <tr class="rows_tr">
+                  <td class="rows_td">Images</td>
+                  <td class="rows_tds">{{ maizeNa }}</td>
+                </tr>
+                <tr class="rows_tr">
+                  <td class="rows_td annotated">Annotated</td>
+                  <td class="rows_tds annotated">{{ maizeNa_A }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 style="font-size:12px">Cocoa, Gh</h5>
+            <table class="table_row">
+              <tbody class="rows_tb">
+                <tr class="rows_tr">
+                  <td class="rows_td">Images</td>
+                  <td class="rows_tds">{{ cocoa }}</td>
+                </tr>
+                <tr class="rows_tr">
+                  <td class="rows_td annotated">Annotated</td>
+                  <td class="rows_tds annotated">{{ cocoa_A }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+          <div class="col-sm-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title" style="font-size:12px">Maize, Gh</h5>
+            <table class="table_row">
+              <tbody class="rows_tb">
+                <tr class="rows_tr">
+                  <td class="rows_td">Images</td>
+                  <td class="rows_tds">{{ maizeGh }}</td>
+                </tr>
+                <tr class="rows_tr">
+                  <td class="rows_td annotated">Annotated</td>
+                  <td class="rows_tds annotated">{{ maizeGh_A }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+            </div>
+    {% endif %}
+
 {% endblock content %}

@@ -39,9 +39,9 @@
         <div class="col-md-2 bg-light d-none d-md-block sidebar">
           <div class="left-sidebar">
             <div class="sidebar__menu">
-              <div class="side__link">
-                <i class="fa fa-home"></i>
-                <a href="{% url 'home' %}" id="dash" onclick="openDash()">Dashboard</a>
+             <div class="side__link">
+                <i class="fa fa-files-o"></i>
+                <a href="{% url 'upload_list' %}" id="assign" onclick="openAssign()">Batches</a>
               </div>
               {% if request.user.is_admin %}
               <div class="side__link">
@@ -55,10 +55,6 @@
                 <a href="{% url 'annotators_list' %}">Annotators</a>
               </div>
               {% endif %}
-              <div class="side__link">
-                <i class="fa fa-cloud-upload"></i>
-                <a href="{% url 'upload_list' %}" id="assign" onclick="openAssign()">Batches</a>
-              </div>
               <div class="side__link">
                 <i class="fa fa-cloud-download"></i>
                 <a href="download.html" id="download" onclick="openDownload()">Download files</a>
