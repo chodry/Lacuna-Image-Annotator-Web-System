@@ -97,9 +97,48 @@ class AnnotatorCreateView(LoginRequiredMixin, CreateView):
         return super(AnnotatorCreateView, self).form_valid(form)
 
 
-class AnnotatorHomeView(LoginRequiredMixin, TemplateView):
+class AnnotatorHomeView(LoginRequiredMixin, ListView):
     model = Annotator
     template_name = 'annotators_home.html'
+    context_object_name = 'uploads'
+
+    def get_context_data(self, **kwargs):
+        upload = self.request.user.country
+        assigned = self.request.user.annotator
+        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+
+        context = super(AnnotatorHomeView, self).get_context_data(**kwargs)
+
+        context.update({
+            "cassavaUg_uploads": queryset.filter(crop="cassava").count(),
+            "cassavaUg_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
+            "cassavaTz_uploads": queryset.filter(crop="cassava").count(),
+            "cassavaTz_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
+            "maizeUg_uploads": queryset.filter(crop="maize").count(),
+            "maizeUg_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeTz_uploads": queryset.filter(crop="maize").count(),
+            "maizeTz_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeNa_uploads": queryset.filter(crop="maize").count(),
+            "maizeNa_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "maizeGh_uploads": queryset.filter(crop="maize").count(),
+            "maizeGh_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
+            "beans_uploads": queryset.filter(crop="beans").count(),
+            "beans_annotated": queryset.filter(crop="beans").filter(is_annotated=True).count(),
+            "banana_uploads": queryset.filter(crop="banana").count(),
+            "banana_annotated": queryset.filter(crop="banana").filter(is_annotated=True).count(),
+            "pearl_uploads": queryset.filter(crop="pearl_millet").count(),
+            "pearl_annotated": queryset.filter(crop="pearl_millet").filter(is_annotated=True).count(),
+            "cocoa_uploads": queryset.filter(crop="cocoa").count(),
+            "cocoa_annotated": queryset.filter(crop="cocoa").filter(is_annotated=True).count(),
+        })
+
+        return context
+
+    def get_queryset(self):
+        upload = self.request.user.country
+        assigned = self.request.user.annotator
+        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+        return queryset
 
 
 class UploadCreateView(LoginRequiredMixin, CreateView):
@@ -196,3 +235,7 @@ class AssignAnnotatorView(LoginRequiredMixin, FormView):
         upload.leader = self.request.user.username
         upload.save()
         return super(AssignAnnotatorView, self).form_valid(form)
+
+
+class AnnotatorPageView(LoginRequiredMixin, TemplateView):
+    template_name = 'via.html'

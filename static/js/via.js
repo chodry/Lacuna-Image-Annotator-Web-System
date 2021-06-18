@@ -7108,7 +7108,9 @@ function project_get_default_project_name() {
   var ts = now.getDate() + MONTH_SHORT_NAME[now.getMonth()] + now.getFullYear() +
       '_' + now.getHours() + 'h' + now.getMinutes() + 'm';
 
-  var project_name = 'Lacuna_via_project_' + ts;
+  var user_id = JSON.parse(document.getElementById('user_id').textContent);
+  var project_name = user_id + "_" + ts;
+  console.log(user_id)
   return project_name;
 }
 

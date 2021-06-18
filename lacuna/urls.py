@@ -4,6 +4,7 @@ from .views import (
     UploadCreateView, UploadListView, AssignAnnotatorView,
     LeaderCreateView, LeaderListView,
     AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView,
+    AnnotatorPageView,
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     path('create/', LeaderCreateView.as_view(), name='leaders_create'),
     path('annotator', AnnotatorListView.as_view(), name='annotators_list'),
     path('annotator/create/', AnnotatorCreateView.as_view(), name='annotator_create'),
-    path('home/', AnnotatorHomeView.as_view(), name='annotators_home'),
+    path('annotation/', AnnotatorPageView.as_view(), name='annotator'),
+    path('annotate/', AnnotatorHomeView.as_view(), name='annotators_home'),
 ]
