@@ -53,6 +53,7 @@ class Upload(models.Model):
     url = models.CharField(max_length=1000)
     assigned = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
     is_annotated = models.BooleanField(default=False)
+    adminUpload = models.FileField(upload_to='media', blank=True)
 
     def __str__(self):
         return self.url

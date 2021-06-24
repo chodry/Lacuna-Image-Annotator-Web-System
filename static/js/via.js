@@ -1098,22 +1098,31 @@ function _via_get_image_id(filename, size) {
 }
 
 function load_text_file(text_file, callback_function) {
-  if (text_file) {
-    var text_reader = new FileReader();
-    text_reader.addEventListener( 'progress', function(e) {
-      show_message('Loading data from file : ' + text_file.name + ' ... ');
-    }, false);
+  var uploads = JSON.parse(document.getElementById('cas').textContent);
+  var filex = text_file.name.replace(".txt", "")
+  if(uploads.includes(filex)){
+      if (text_file) {
+        var text_reader = new FileReader();
+        text_reader.addEventListener( 'progress', function(e) {
+          show_message('Loading data from file : ' + text_file.name + ' ... ');
+        }, false);
 
-    text_reader.addEventListener( 'error', function() {
-      show_message('Error loading data text file :  ' + text_file.name + ' !');
-      callback_function('');
-    }, false);
+        text_reader.addEventListener( 'error', function() {
+          show_message('Error loading data text file :  ' + text_file.name + ' !');
+          callback_function('');
+        }, false);
 
-    text_reader.addEventListener( 'load', function() {
-      callback_function(text_reader.result);
-    }, false);
-    text_reader.readAsText(text_file, 'utf-8');
+        text_reader.addEventListener( 'load', function() {
+          callback_function(text_reader.result);
+        }, false);
+        text_reader.readAsText(text_file, 'utf-8');
+      }
+  }else {
+    console.log("find another solution")
+    show_message('find another solution');
+    show_page_404(text_file.name)
   }
+
 }
 
 function import_files_url_from_csv(data) {
@@ -7109,8 +7118,9 @@ function project_get_default_project_name() {
       '_' + now.getHours() + 'h' + now.getMinutes() + 'm';
 
   var user_id = JSON.parse(document.getElementById('user_id').textContent);
+  var uploads = JSON.parse(document.getElementById('cas').textContent);
   var project_name = user_id + "_" + ts;
-  console.log(user_id)
+//  console.log(uploads)
   return project_name;
 }
 

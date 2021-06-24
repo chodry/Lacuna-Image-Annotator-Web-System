@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/via.css' %}">
   </head>
   <body onload="_via_init()" onresize="_via_update_ui_components()">
-
+    {{ cass | json_script:"cas" }}
     <!--
         SVG icon set definitions
         Material icons downloaded from https://material.io/icons

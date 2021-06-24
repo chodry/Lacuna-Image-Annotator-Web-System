@@ -1,4 +1,8 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+from django.views.static import serve
 from .views import (
     HomePageView, CountryCreateView, LandingPageView,
     UploadCreateView, UploadListView, AssignAnnotatorView,
@@ -19,5 +23,10 @@ urlpatterns = [
     path('annotator', AnnotatorListView.as_view(), name='annotators_list'),
     path('annotator/create/', AnnotatorCreateView.as_view(), name='annotator_create'),
     path('annotation/', AnnotatorPageView.as_view(), name='annotator'),
+    url(r'^download/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     path('annotate/', AnnotatorHomeView.as_view(), name='annotators_home'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

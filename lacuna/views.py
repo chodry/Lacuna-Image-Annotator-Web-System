@@ -7,6 +7,9 @@ from django.urls import reverse_lazy
 from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm
 from django.core.mail import send_mail
 import random
+import os
+from django.conf import settings
+from django.http import HttpResponse, Http404
 
 
 # Create your views here.
@@ -141,10 +144,20 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
         return queryset
 
 
+def download(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb')as fh:
+            response = HttpResponse(fh.read(), content_type="application/adminUpload")
+            response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
 class UploadCreateView(LoginRequiredMixin, CreateView):
     model = Upload
     template_name = 'upload.html'
-    fields = ('crop', 'country', 'url',)
+    fields = ('crop', 'country', 'url', 'adminUpload',)
     success_url = reverse_lazy('upload_list')
 
     def form_valid(self, form):
@@ -237,5 +250,28 @@ class AssignAnnotatorView(LoginRequiredMixin, FormView):
         return super(AssignAnnotatorView, self).form_valid(form)
 
 
-class AnnotatorPageView(LoginRequiredMixin, TemplateView):
+class AnnotatorPageView(LoginRequiredMixin, ListView):
+    model = Upload
+    context_object_name = 'uploads'
     template_name = 'via.html'
+
+    def get_context_data(self, **kwargs):
+        upload = self.request.user.country
+        assigned = self.request.user.annotator
+        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+
+        firstnames = queryset.values_list('url', flat=True)
+        firstnames = list(firstnames)
+        chodrine = ""
+        for ele in firstnames:
+            chodrine += ele
+        chodrine
+        print(chodrine)
+
+        context = super(AnnotatorPageView, self).get_context_data(**kwargs)
+
+        context.update({
+            "cass": chodrine,
+        })
+
+        return context
