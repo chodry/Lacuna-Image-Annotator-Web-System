@@ -1097,10 +1097,17 @@ function _via_get_image_id(filename, size) {
   }
 }
 
+var folder = "lacuna";
+
 function load_text_file(text_file, callback_function) {
   var uploads = JSON.parse(document.getElementById('cas').textContent);
+  var annotated = JSON.parse(document.getElementById('mas').textContent);
   var filex = text_file.name.replace(".txt", "")
   if(uploads.includes(filex)){
+      if(annotated.includes(filex)){
+        show_message('This file was already annotated by you: ' + text_file.name + ' ... ');
+      }else {
+
       if (text_file) {
         var text_reader = new FileReader();
         text_reader.addEventListener( 'progress', function(e) {
@@ -1117,10 +1124,12 @@ function load_text_file(text_file, callback_function) {
         }, false);
         text_reader.readAsText(text_file, 'utf-8');
       }
+      folder = filex;
+      }
+
+
   }else {
-    console.log("find another solution")
-    show_message('find another solution');
-    show_page_404(text_file.name)
+    show_message('Not the same file as the one you downloaded : ' + text_file.name + ' ... ');
   }
 
 }
@@ -7125,17 +7134,25 @@ function project_get_default_project_name() {
 }
 
 function project_save_with_confirm() {
-  var config = {'title':'Save Project' };
-  var input = { 'project_name': { type:'text', name:'Project Name', value:_via_settings.project.name, disabled:false, size:30 },
-                'save_annotations':{ type:'checkbox', name:'Save region and file annotations (i.e. manual annotations)', checked:true, disabled:false},
-                'save_attributes':{ type:'checkbox', name:'Save region and file attributes.', checked:true},
-                'save_via_settings':{ type:'checkbox', name:'Save VIA application settings', checked:true},
-                //                'save_base64_data':{ type:'checkbox', name:'Save base64 data of images (if present)', checked:false},
-                //                'save_images':{type:'checkbox', 'name':'Save images <span class="warning">(WARNING: only recommended for projects containing small number of images)</span>', value:false},
-              };
+   if (folder == "lacuna"){
+     console.log('No Annotations were made')
+     show_message('No file was loaded for annotation');
+      }else {
+        var config = {'title':'Save Project' };
+        var input = { 'project_name': { type:'text', name:'Project Name', value:_via_settings.project.name, disabled:true, size:30 },
+                      'save_annotations':{ type:'checkbox', name:'Save region and file annotations (i.e. manual annotations)', checked:true, disabled:true},
+                      'save_attributes':{ type:'checkbox', name:'Save region and file attributes.', checked:true, disabled:true},
+                      'save_via_settings':{ type:'checkbox', name:'Save VIA application settings', checked:true, disabled:true},
+                      //                'save_base64_data':{ type:'checkbox', name:'Save base64 data of images (if present)', checked:false},
+                      //                'save_images':{type:'checkbox', 'name':'Save images <span class="warning">(WARNING: only recommended for projects containing small number of images)</span>', value:false},
+                    };
 
-  invoke_with_user_inputs(project_save_confirmed, input, config);
+        invoke_with_user_inputs(project_save_confirmed, input, config);
+      }
 }
+
+var fileUpload = "lacuna";
+var data_blob = "lacuna.txt";
 
 function project_save_confirmed(input) {
   if ( input.project_name.value !== _via_settings.project.name ) {
@@ -7150,14 +7167,21 @@ function project_save_confirmed(input) {
                        '_via_image_id_list': _via_image_id_list
                      };
 
-  var filename = input.project_name.value + '.json';
-  var data_blob = new Blob( [JSON.stringify(_via_project)],
+  fileUpload = input.project_name.value
+  var filename =  fileUpload + '.json';
+  data_blob = new Blob( [JSON.stringify(_via_project)],
                             {type: 'text/json;charset=utf-8'});
 
-  save_data_to_local_file(data_blob, filename);
+    document.querySelector(".popup").style.display = "flex";
+
+//  save_data_to_local_file(data_blob, filename);
 
   user_input_default_cancel_handler();
 }
+
+document.querySelector(".close").addEventListener("click", function(){
+      document.querySelector(".popup").style.display = "none";
+})
 
 function project_open_select_project_file() {
   if (invisible_file_input) {
@@ -10045,3 +10069,56 @@ function polygon_to_bbox(pts) {
   }
   return [xmin, ymin, xmax-xmin, ymax-ymin];
 }
+
+
+//upload file
+var file_name = "chodrine";
+
+function myFunction() {
+    file_name = 'peter'
+    document.getElementById("demo").innerHTML = file_name;
+}
+
+function myFunction2() {
+    document.getElementById("demo2").innerHTML = file_name;
+}
+
+var blob = new Blob(["Welcome to Websparrow.org."]);
+
+$(document).ready(function () {
+
+    $("#upload").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+//        var blob = new Blob(["Welcome to Websparrow.org."]);
+        var formData = new FormData();  // Need to define FormData for the ajax post
+        formData.append('mydata', data_blob)  // Add blob to form data
+        formData.append('fileName', fileUpload)
+        formData.append('file', folder)
+        // console.log(blob);
+        console.log("Blob created");
+        $.ajax({
+            method: 'POST',
+            url: "/fileUpload/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function () {
+                console.log("File posted successfully");
+                 document.querySelector(".popup").style.display = "none";
+                },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
+
+
+
+
+});

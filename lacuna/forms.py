@@ -21,7 +21,8 @@ class LeaderModelForm(forms.ModelForm):
         fields = (
             'email',
             'username',
-            'country'
+            'country',
+            'crop',
         )
 
 

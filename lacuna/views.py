@@ -10,6 +10,8 @@ import random
 import os
 from django.conf import settings
 from django.http import HttpResponse, Http404
+import json
+from django.core.files.storage import default_storage
 
 
 # Create your views here.
@@ -84,6 +86,7 @@ class AnnotatorCreateView(LoginRequiredMixin, CreateView):
         user.is_leader = False
         user.is_annotator = True
         user.country = self.request.user.country
+        user.crop = self.request.user.crop
         user.set_password(f"{random.randint(0, 1000000)}")
         user.save()
         Annotator.objects.create(
@@ -108,31 +111,16 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         upload = self.request.user.country
         assigned = self.request.user.annotator
+        crop = self.request.user.crop
         queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
 
         context = super(AnnotatorHomeView, self).get_context_data(**kwargs)
 
         context.update({
-            "cassavaUg_uploads": queryset.filter(crop="cassava").count(),
-            "cassavaUg_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
-            "cassavaTz_uploads": queryset.filter(crop="cassava").count(),
-            "cassavaTz_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
-            "maizeUg_uploads": queryset.filter(crop="maize").count(),
-            "maizeUg_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeTz_uploads": queryset.filter(crop="maize").count(),
-            "maizeTz_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeNa_uploads": queryset.filter(crop="maize").count(),
-            "maizeNa_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeGh_uploads": queryset.filter(crop="maize").count(),
-            "maizeGh_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "beans_uploads": queryset.filter(crop="beans").count(),
-            "beans_annotated": queryset.filter(crop="beans").filter(is_annotated=True).count(),
-            "banana_uploads": queryset.filter(crop="banana").count(),
-            "banana_annotated": queryset.filter(crop="banana").filter(is_annotated=True).count(),
-            "pearl_uploads": queryset.filter(crop="pearl_millet").count(),
-            "pearl_annotated": queryset.filter(crop="pearl_millet").filter(is_annotated=True).count(),
-            "cocoa_uploads": queryset.filter(crop="cocoa").count(),
-            "cocoa_annotated": queryset.filter(crop="cocoa").filter(is_annotated=True).count(),
+            "crop": crop,
+            "cas": queryset.filter(crop=crop).count(),
+            "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
+
         })
 
         return context
@@ -140,7 +128,8 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         upload = self.request.user.country
         assigned = self.request.user.annotator
-        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+        crop = self.request.user.crop
+        queryset = Upload.objects.filter(country=upload).filter(crop=crop).filter(assigned=assigned)
         return queryset
 
 
@@ -171,6 +160,8 @@ class UploadListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         upload = self.request.user.country
+        crop = self.request.user.crop
+        # print(crop)
         queryset = Upload.objects.filter(country=upload)
         queryset2 = Upload.objects.filter(country=Country.objects.get(country='Uganda'))
         queryset3 = Upload.objects.filter(country=Country.objects.get(country='Tanzania'))
@@ -180,53 +171,38 @@ class UploadListView(LoginRequiredMixin, ListView):
         context = super(UploadListView, self).get_context_data(**kwargs)
 
         context.update({
-            "cassavaUg_uploads": queryset.filter(crop="cassava").count(),
-            "cassavaUg": queryset2.filter(crop="cassava").count(),
-            "cassavaUg_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
-            "cassavaUg_A": queryset2.filter(crop="cassava").filter(is_annotated=True).count(),
-            "cassavaTz_uploads": queryset.filter(crop="cassava").count(),
-            "cassavaTz": queryset3.filter(crop="cassava").count(),
-            "cassavaTz_annotated": queryset.filter(crop="cassava").filter(is_annotated=True).count(),
-            "cassavaTz_A": queryset3.filter(crop="cassava").filter(is_annotated=True).count(),
-            "maizeUg_uploads": queryset.filter(crop="maize").count(),
-            "maizeUg": queryset2.filter(crop="maize").count(),
-            "maizeUg_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeUg_A": queryset2.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeTz_uploads": queryset.filter(crop="maize").count(),
-            "maizeTz": queryset3.filter(crop="maize").count(),
-            "maizeTz_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeTz_A": queryset3.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeNa_uploads": queryset.filter(crop="maize").count(),
-            "maizeNa": queryset4.filter(crop="maize").count(),
-            "maizeNa_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeNa_A": queryset4.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeGh_uploads": queryset.filter(crop="maize").count(),
-            "maizeGh": queryset5.filter(crop="maize").count(),
-            "maizeGh_annotated": queryset.filter(crop="maize").filter(is_annotated=True).count(),
-            "maizeGh_A": queryset5.filter(crop="maize").filter(is_annotated=True).count(),
-            "beans_uploads": queryset.filter(crop="beans").count(),
-            "beans": queryset2.filter(crop="beans").count(),
-            "beans_annotated": queryset.filter(crop="beans").filter(is_annotated=True).count(),
-            "beans_A": queryset2.filter(crop="beans").filter(is_annotated=True).count(),
-            "banana_uploads": queryset.filter(crop="banana").count(),
-            "bananaTz": queryset3.filter(crop="banana").count(),
-            "banana_annotated": queryset.filter(crop="banana").filter(is_annotated=True).count(),
-            "banana_A": queryset3.filter(crop="banana").filter(is_annotated=True).count(),
-            "pearl_uploads": queryset.filter(crop="pearl_millet").count(),
-            "pearl": queryset4.filter(crop="pearl_millet").count(),
-            "pearl_annotated": queryset.filter(crop="pearl_millet").filter(is_annotated=True).count(),
-            "pearl_A": queryset4.filter(crop="pearl_millet").filter(is_annotated=True).count(),
-            "cocoa_uploads": queryset.filter(crop="cocoa").count(),
-            "cocoa": queryset5.filter(crop="cocoa").count(),
-            "cocoa_annotated": queryset.filter(crop="cocoa").filter(is_annotated=True).count(),
-            "cocoa_A": queryset5.filter(crop="cocoa").filter(is_annotated=True).count(),
+            "crop": crop,
+            "cas": queryset.filter(crop=crop).count(),
+            "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
+
+            "cassavaUg": queryset2.filter(crop="Cassava").count(),
+            "cassavaUg_A": queryset2.filter(crop="Cassava").filter(is_annotated=True).count(),
+            "cassavaTz": queryset3.filter(crop="Cassava").count(),
+            "cassavaTz_A": queryset3.filter(crop="Cassava").filter(is_annotated=True).count(),
+            "maizeUg": queryset2.filter(crop="Maize").count(),
+            "maizeUg_A": queryset2.filter(crop="Maize").filter(is_annotated=True).count(),
+            "maizeTz": queryset3.filter(crop="Maize").count(),
+            "maizeTz_A": queryset3.filter(crop="Maize").filter(is_annotated=True).count(),
+            "maizeNa": queryset4.filter(crop="Maize").count(),
+            "maizeNa_A": queryset4.filter(crop="Maize").filter(is_annotated=True).count(),
+            "maizeGh": queryset5.filter(crop="Maize").count(),
+            "maizeGh_A": queryset5.filter(crop="Maize").filter(is_annotated=True).count(),
+            "beans": queryset2.filter(crop="Beans").count(),
+            "beans_A": queryset2.filter(crop="Beans").filter(is_annotated=True).count(),
+            "bananaTz": queryset3.filter(crop="Banana").count(),
+            "banana_A": queryset3.filter(crop="Banana").filter(is_annotated=True).count(),
+            "pearl": queryset4.filter(crop="Pearl_millet").count(),
+            "pearl_A": queryset4.filter(crop="Pearl_millet").filter(is_annotated=True).count(),
+            "cocoa": queryset5.filter(crop="Cocoa").count(),
+            "cocoa_A": queryset5.filter(crop="Cocoa").filter(is_annotated=True).count(),
         })
 
         return context
 
     def get_queryset(self):
         upload = self.request.user.country
-        return Upload.objects.filter(country=upload)
+        crop = self.request.user.crop
+        return Upload.objects.filter(country=upload).filter(crop=crop)
 
 
 class AssignAnnotatorView(LoginRequiredMixin, FormView):
@@ -259,8 +235,10 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
         upload = self.request.user.country
         assigned = self.request.user.annotator
         queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+        queryset2 = queryset.filter(is_annotated=True)
 
         firstnames = queryset.values_list('url', flat=True)
+
         firstnames = list(firstnames)
         chodrine = ""
         for ele in firstnames:
@@ -268,10 +246,57 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
         chodrine
         print(chodrine)
 
+        lastnames = queryset2.values_list('url', flat=True)
+        lastnames = list(lastnames)
+        mutebi = ""
+        for ele in lastnames:
+            mutebi += ele
+        mutebi
+        print(mutebi)
+
         context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
         context.update({
             "cass": chodrine,
+            "maz": mutebi,
         })
 
         return context
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        print(request.FILES)
+        blob = request.FILES.get('mydata')
+        fileName = request.POST.get('fileName')
+        folder = request.POST.get('file')
+        # print(chod)
+        # File type is : InMemoryUploadedFile, can be saved in many ways, here I use Django's inbuilt default_storage
+        print(type(blob))
+        print(folder)
+        # Define how you want to save and your save path for the files
+        path = default_storage.save('media/' + fileName + ".json", blob)
+        # url = Upload.objects.get(url=folder)
+        Upload.objects.filter(url=folder).update(is_annotated=True)
+        Upload.objects.filter(url=folder).update(annotatorUpload=path)
+        print(path)
+    return HttpResponse("File received")
+
+
+class DownloadList(LoginRequiredMixin, ListView):
+    model = Upload
+    template_name = 'download.html'
+    context_object_name = 'uploads'
+
+    def get_queryset(self):
+        return Upload.objects.all()
+
+
+def downloadV2(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb')as fh:
+            response = HttpResponse(fh.read(), content_type="application/annotatorUpload")
+            response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
+            return response
+    raise Http404

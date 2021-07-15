@@ -5,6 +5,16 @@ from django.db import models
 
 # Create your models here.
 class CustomUser(AbstractUser):
+    CROPS = (
+        ('Banana', 'Banana'),
+        ('Beans', 'Beans'),
+        ('Cassava', 'Cassava'),
+        ('Cocoa', 'Cocoa'),
+        ('Maize', 'Maize'),
+        ('Pearl_millet', 'Pearl Millet'),
+
+    )
+    crop = models.CharField(choices=CROPS, max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(default=True)
     is_leader = models.BooleanField(default=False)
     is_annotator = models.BooleanField(default=False)
@@ -22,6 +32,7 @@ class Country(models.Model):
 
 
 class Leader(models.Model):
+
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     country = models.CharField(max_length=100)
 
@@ -39,13 +50,12 @@ class Annotator(models.Model):
 
 class Upload(models.Model):
     CROPS = (
-        ('banana', 'Banana'),
-        ('beans', 'Beans'),
-        ('cassava', 'Cassava'),
-        ('cocoa', 'Cocoa'),
-        ('maize', 'Maize'),
-        ('pearl_millet', 'Pearl Millet'),
-
+        ('Banana', 'Banana'),
+        ('Beans', 'Beans'),
+        ('Cassava', 'Cassava'),
+        ('Cocoa', 'Cocoa'),
+        ('Maize', 'Maize'),
+        ('Pearl_millet', 'Pearl Millet'),
     )
     crop = models.CharField(choices=CROPS, max_length=100)
     country = models.ForeignKey(Country, models.CASCADE)
@@ -54,6 +64,8 @@ class Upload(models.Model):
     assigned = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
     is_annotated = models.BooleanField(default=False)
     adminUpload = models.FileField(upload_to='media', blank=True)
+    annotatorUpload = models.FileField(upload_to='media', blank=True)
+    last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     def __str__(self):
         return self.url

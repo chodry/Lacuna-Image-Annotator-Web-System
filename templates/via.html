@@ -7,11 +7,15 @@
     <meta name="author" content="Mutebi Chodrine">
     <meta name="description" content="VIA is a standalone image annotator application packaged as a single HTML file (< 400 KB) that runs on most modern web browsers.">
 
-    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/via.css' %}">
   </head>
   <body onload="_via_init()" onresize="_via_update_ui_components()">
     {{ cass | json_script:"cas" }}
+    {{ maz | json_script:"mas" }}
     <!--
         SVG icon set definitions
         Material icons downloaded from https://material.io/icons
@@ -701,7 +705,23 @@ POSSIBILITY OF SUCH DAMAGE.
          items like Keyboard Shortcut hidden under the attributes panel -->
     <div style="width: 100%;" id="vertical_space"></div>
 
+     <div class="popup">
+      <div class="popup_content">
+        <img src="{% static 'images/close.jpg' %}" alt="Close" class="close">
+
+        <div class="message">
+          <p>Please click the 'Upload File' button below to submit your annotations</p>
+        </div>
+        {% csrf_token %}
+        <button class="butt" id="upload">Upload File</button>
+      </div>
+    </div>
+
     <!-- DEMO SCRIPT AUTOMATICALLY INSERTED BY VIA PACKER SCRIPT -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="{% static 'js/via.js' %}"></script>
 
   </body>

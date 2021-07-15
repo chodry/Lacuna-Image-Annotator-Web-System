@@ -216,3 +216,65 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
 
 .force_small_font { font-size:small !important; }
 .key { font-family:monospace; padding:1px 6px; background:linear-gradient(to bottom,#f0f0f0,#fcfcfc);; border:1px solid #e0e0e0; white-space:nowrap; color:#303030; border-bottom-width:2px; border-radius:3px; font-size:1.2em; }
+
+
+.popup {
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.popup_content {
+  height: 250px;
+  width: 500px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.popup_content input {
+  margin: 20px auto;
+  display: block;
+  width: 50%;
+  padding: 8px;
+  border: 1px solid grey;
+}
+
+.popup_content .butt {
+  background: #fff;
+  position: 10px 15px;
+  color: #34495e;
+  text-transform: uppercase;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: 25px;
+  text-decoration: none;
+}
+
+.popup_content img {
+  height: 50px;
+  width: 50px;
+  border-radius: 4px;
+}
+
+.popup_content .close {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  box-shadow: 6px 6px 29px -4px rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+}
+
+.message {
+  margin-top: 50px;
+ }

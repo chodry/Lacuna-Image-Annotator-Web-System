@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div id="dash">
+    <h5 style="margin-top:20px">Annotated Files</h5>
+    <hr>
+
+    {% if request.user.is_admin %}
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+               <div id="tables">
+                  <table class="table table-bordered table_annotator">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Crop</th>
+                          <th>Name</th>
+                          <th>Country</th>
+                          <th>Team Leader</th>
+                          <th>Annotator</th>
+                          <th>Annotated File</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        {% for upload in uploads %}
+                        {% if upload.is_annotated %}
+                        <tr>
+                          <td>{{ upload.crop }}</td>
+                          <td>{{ upload.url }}</td>
+                          <td>{{ upload.country }}</td>
+                          <td>{{ upload.leader }}</td>
+                          <td>{{ upload.assigned }}</td>
+                          <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+
+    <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+
+                      </tbody>
+                  </table>
+               </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% if request.user.is_leader %}
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+               <div id="tables">
+                  <table class="table table-bordered table_annotator">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Crop</th>
+                          <th>Name</th>
+                          <th>Country</th>
+                          <th>Annotator</th>
+                          <th>Annotated File</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        {% for upload in uploads %}
+                        {% if upload.is_annotated %}
+                        <tr>
+                          <td>{{ upload.crop }}</td>
+                          <td>{{ upload.url }}</td>
+                          <td>{{ upload.country }}</td>
+                          <td>{{ upload.assigned }}</td>
+                          <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+
+    <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+
+                      </tbody>
+                  </table>
+               </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock content %}

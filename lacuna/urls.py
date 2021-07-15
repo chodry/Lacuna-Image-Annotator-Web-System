@@ -8,7 +8,7 @@ from .views import (
     UploadCreateView, UploadListView, AssignAnnotatorView,
     LeaderCreateView, LeaderListView,
     AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView,
-    AnnotatorPageView,
+    AnnotatorPageView, upload_file, DownloadList,
 )
 
 urlpatterns = [
@@ -25,6 +25,8 @@ urlpatterns = [
     path('annotation/', AnnotatorPageView.as_view(), name='annotator'),
     url(r'^download/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     path('annotate/', AnnotatorHomeView.as_view(), name='annotators_home'),
+    path('fileUpload/', upload_file, name='upload_file'),
+    path('downl/', DownloadList.as_view(), name='downloads'),
 ]
 
 if settings.DEBUG:
