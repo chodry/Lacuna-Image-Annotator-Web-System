@@ -115,8 +115,8 @@
                               <th>Crop</th>
                               <th>Name</th>
                               <th>Country</th>
-                              <th>Uploaded on</th>
                               <th>Annotator</th>
+                              <th>Download Json file</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -126,8 +126,9 @@
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
-                              <td>{{ upload.last_updated }}</td>
                               <td>{{ upload.assigned }}</td>
+                              <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+
 <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
                             </tr>
                             {% endif %}

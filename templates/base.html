@@ -63,10 +63,10 @@
                 <i class="fa fa-users"></i>
                 <a href="{% url 'annotators_list' %}">Annotators</a>
               </div>
-              <div class="side__link">
-                <i class="fa fa-cloud-download"></i>
-                <a href="{% url 'downloads' %}" id="download" onclick="openDownload()">Download files</a>
-              </div>
+<!--              <div class="side__link">-->
+<!--                <i class="fa fa-cloud-download"></i>-->
+<!--                <a href="{% url 'downloads' %}" id="download" onclick="openDownload()">Download files</a>-->
+<!--              </div>-->
               {% endif %}
 
               {% if request.user.is_annotator %}
