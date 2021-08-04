@@ -59,7 +59,7 @@ class LeaderCreateView(LoginRequiredMixin, CreateView):
             subject="Lacuna Annotation Project",
             message="You were added as an Team Leader on the Lacuna Annotation Project. Please log in, Your username "
                     "is: " + user.username,
-            from_email="admin@test.com",
+            from_email="mcrops101@gmail.com",
             recipient_list=[user.email]
         )
         return super(LeaderCreateView, self).form_valid(form)
@@ -97,7 +97,7 @@ class AnnotatorCreateView(LoginRequiredMixin, CreateView):
             subject="Lacuna Annotation Project",
             message="You were added as an Annotator on the Lacuna Annotation Project. Please log in, Your username "
                     "is: " + user.username,
-            from_email="admin@test.com",
+            from_email="mcrops101@gmail.com",
             recipient_list=[user.email]
         )
         return super(AnnotatorCreateView, self).form_valid(form)
