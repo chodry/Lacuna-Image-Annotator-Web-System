@@ -72,12 +72,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
+DEFAULT_FROM_EMAIL = "admin@support.mujerry.com"
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'mcrops101@gmail.com'
-EMAIL_HOST_PASSWORD = 'mcrops12345'
+EMAIL_HOST = 'smtp.sparkpostmail.com'
+EMAIL_HOST_USER = 'SMTP_Injection'
+EMAIL_HOST_PASSWORD = '3b4e9d7d12a9b28d8ffe8f5c6b4a9b17fa6a9e95'
 EMAIL_PORT = 587
 
 
