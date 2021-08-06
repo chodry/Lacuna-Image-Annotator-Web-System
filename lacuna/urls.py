@@ -24,7 +24,7 @@ urlpatterns = [
     path('annotator/create/', AnnotatorCreateView.as_view(), name='annotator_create'),
     path('annotation/', AnnotatorPageView.as_view(), name='annotator'),
     url(r'^download/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    path('annotate/', AnnotatorHomeView.as_view(), name='annotators_home'),
+    path('annotation_home/', AnnotatorHomeView.as_view(), name='annotators_home'),
     path('fileUpload/', upload_file, name='upload_file'),
     path('downl/', DownloadList.as_view(), name='downloads'),
 ]

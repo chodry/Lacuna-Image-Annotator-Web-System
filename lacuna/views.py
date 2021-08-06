@@ -5,7 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Country, Upload, Leader, Annotator
 from django.urls import reverse_lazy
 from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 import random
 import os
 from django.conf import settings
@@ -55,10 +57,15 @@ class LeaderCreateView(LoginRequiredMixin, CreateView):
             user=user,
             country=form.cleaned_data.get('country')
         )
+
+        # html_content = render_to_string("email_template.html")
         send_mail(
             subject="Lacuna Annotation Project",
-            message="You were added as an Team Leader on the Lacuna Annotation Project. Please log in, Your username "
-                    "is: " + user.username,
+            message="You were added as a Team Leader for " + user.crop + "on the Lacuna Annotation Project. Your "
+                    "username is: " + user.username + "\n Please access our web app from this link "
+                                                      "http://104.155.175.230/ "
+                    "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password " 
+                    "then log in.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email]
         )
@@ -95,8 +102,11 @@ class AnnotatorCreateView(LoginRequiredMixin, CreateView):
         )
         send_mail(
             subject="Lacuna Annotation Project",
-            message="You were added as an Annotator on the Lacuna Annotation Project. Please log in, Your username "
-                    "is: " + user.username,
+            message="You were added as an Annotator for " + user.crop + "on the Lacuna Annotation Project. Your "
+                    "username is: " + user.username + "\n Please access our web app from this link "
+                    "http://104.155.175.230/ "
+                    "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password "
+                    "then log in.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email]
         )
