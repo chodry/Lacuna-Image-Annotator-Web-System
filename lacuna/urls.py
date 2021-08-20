@@ -5,7 +5,7 @@ from django.conf.urls import url
 from django.views.static import serve
 from .views import (
     HomePageView, CountryCreateView, LandingPageView,
-    UploadCreateView, UploadListView, AssignAnnotatorView,
+    UploadCreateView, UploadListView, AssignAnnotatorView, AssignAnnotatorView2,
     LeaderCreateView, LeaderListView,
     AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView,
     AnnotatorPageView, upload_file, DownloadList,
@@ -18,6 +18,7 @@ urlpatterns = [
     path('upload/', UploadCreateView.as_view(), name='upload'),
     path('', UploadListView.as_view(), name='upload_list'),
     path('<int:pk>/upload_assign/', AssignAnnotatorView.as_view(), name='upload_assign'),
+    path('<int:pk>/upload_assign2/', AssignAnnotatorView2.as_view(), name='upload_assign2'),
     path('leader/', LeaderListView.as_view(), name='leaders_list'),
     path('create/', LeaderCreateView.as_view(), name='leaders_create'),
     path('annotator', AnnotatorListView.as_view(), name='annotators_list'),

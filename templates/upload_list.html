@@ -10,7 +10,7 @@
                     <table class="table_row">
                       <tbody class="rows_tb">
                         <tr class="rows_tr">
-                          <td class="rows_td">Images</td>
+                          <td class="rows_td">Batches</td>
                           <td class="rows_tds">{{ cas }}</td>
                         </tr>
                         <tr class="rows_tr">
@@ -41,7 +41,10 @@
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Assigned</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Annotated</a>
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Annotation 1</a>
+                      </li>
+                       <li class="nav-item">
+                        <a class="nav-link" id="contact-tab2" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Annotation 2</a>
                       </li>
                     </ul>
                 <div class="tab-content" id="myTabContent">
@@ -77,7 +80,7 @@
                         </div>
                   </div>
                   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <div id="tables">
+                        <div id="tables2">
                           <table class="table table-bordered table_annotator">
                           <thead class="thead-light">
                             <tr>
@@ -108,29 +111,38 @@
                         </div>
                   </div>
                   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                          <div id="tables">
+                          <div id="tables3">
                           <table class="table table-bordered table_annotator">
                           <thead class="thead-light">
                             <tr>
                               <th>Crop</th>
                               <th>Name</th>
                               <th>Country</th>
-                              <th>Annotator</th>
+                              <th>Annotator 1</th>
                               <th>Download Json file</th>
+                              <th>Annotator 2</th>
+
                             </tr>
                           </thead>
                           <tbody>
                             {% for upload in uploads %}
                             {% if upload.is_annotated %}
+                            {% if not upload.is_annotated2 %}
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
                               <td>{{ upload.assigned }}</td>
                               <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+                              {% if not upload.annotator_2 %}
+                                <td><a href="{% url 'upload_assign2' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
+                              {% endif %}
+                              {% if upload.annotator_2 %}
+                                <td>{{ upload.annotator_2 }}</td>
+                              {% endif %}
 
-<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
                             </tr>
+                            {% endif %}
                             {% endif %}
                             {% endfor %}
                           </tbody>

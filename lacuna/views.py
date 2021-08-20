@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Country, Upload, Leader, Annotator
+from .models import Country, Upload, Leader, Annotator, CustomUser
 from django.urls import reverse_lazy
-from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm
+from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm, AssignAnnotatorForm2
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -124,12 +124,19 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
         crop = self.request.user.crop
         queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
 
+        annotator = Annotator.objects.get(user=self.request.user.id)
+        annotator = annotator.annotate_all
+
+        queryset2 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+
         context = super(AnnotatorHomeView, self).get_context_data(**kwargs)
 
         context.update({
             "crop": crop,
             "cas": queryset.filter(crop=crop).count(),
             "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
+            "annotator": annotator,
+            "second": queryset2,
 
         })
 
@@ -236,6 +243,29 @@ class AssignAnnotatorView(LoginRequiredMixin, FormView):
         return super(AssignAnnotatorView, self).form_valid(form)
 
 
+class AssignAnnotatorView2(LoginRequiredMixin, FormView):
+    template_name = "upload_assign2.html"
+    form_class = AssignAnnotatorForm2
+    success_url = reverse_lazy('upload_list')
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(AssignAnnotatorView2, self).get_form_kwargs(**kwargs)
+        kwargs.update({
+            "request": self.request,
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        annotator = form.cleaned_data["annotator_2"]
+        upload = Upload.objects.get(id=self.kwargs["pk"])
+        upload.annotator_2 = annotator
+        cus = CustomUser.objects.get(username=annotator)
+        cus = cus.id
+        Annotator.objects.filter(user=cus).update(annotate_all=True)
+        upload.save()
+        return super(AssignAnnotatorView2, self).form_valid(form)
+
+
 class AnnotatorPageView(LoginRequiredMixin, ListView):
     model = Upload
     context_object_name = 'uploads'
@@ -246,32 +276,35 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
         assigned = self.request.user.annotator
         queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
         queryset2 = queryset.filter(is_annotated=True)
+        queryset3 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+        queryset4 = queryset3.filter(is_annotated2=True)
 
-        firstnames = queryset.values_list('url', flat=True)
-
-        firstnames = list(firstnames)
-        chodrine = ""
-        for ele in firstnames:
-            chodrine += ele
-        chodrine
-        print(chodrine)
-
-        lastnames = queryset2.values_list('url', flat=True)
-        lastnames = list(lastnames)
-        mutebi = ""
-        for ele in lastnames:
-            mutebi += ele
-        mutebi
-        print(mutebi)
+        chodrine = generateList(queryset)
+        mutebi = generateList(queryset2)
+        musisi = generateList(queryset3)
+        john = generateList(queryset4)
 
         context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
         context.update({
             "cass": chodrine,
             "maz": mutebi,
+            "anno": musisi,
+            "john": john,
         })
 
         return context
+
+
+def generateList(queryset):
+    firstnames = queryset.values_list('url', flat=True)
+
+    firstnames = list(firstnames)
+    chodrine = ""
+    for ele in firstnames:
+        chodrine += ele
+
+    return chodrine
 
 
 def upload_file(request):
@@ -280,6 +313,7 @@ def upload_file(request):
         blob = request.FILES.get('mydata')
         fileName = request.POST.get('fileName')
         folder = request.POST.get('file')
+        annotation = request.POST.get('annotated')
         # print(chod)
         # File type is : InMemoryUploadedFile, can be saved in many ways, here I use Django's inbuilt default_storage
         print(type(blob))
@@ -287,9 +321,13 @@ def upload_file(request):
         # Define how you want to save and your save path for the files
         path = default_storage.save('media/' + fileName + ".json", blob)
         # url = Upload.objects.get(url=folder)
-        Upload.objects.filter(url=folder).update(is_annotated=True)
-        Upload.objects.filter(url=folder).update(annotatorUpload=path)
-        print(path)
+        if annotation == "first":
+            Upload.objects.filter(url=folder).update(is_annotated=True)
+            Upload.objects.filter(url=folder).update(annotatorUpload=path)
+        else:
+            Upload.objects.filter(url=folder).update(is_annotated2=True)
+            Upload.objects.filter(url=folder).update(annotatorUpload2=path)
+        # print(path)
     return HttpResponse("File received")
 
 

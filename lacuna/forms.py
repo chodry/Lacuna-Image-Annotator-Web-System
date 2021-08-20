@@ -36,7 +36,6 @@ class AnnotatorModelForm(forms.ModelForm):
 
 
 class AssignAnnotatorForm(forms.Form):
-
     assigned = forms.ModelChoiceField(queryset=Annotator.objects.none())
 
     def __init__(self, *args, **kwargs):
@@ -44,3 +43,13 @@ class AssignAnnotatorForm(forms.Form):
         annotators = Annotator.objects.filter(leader=request.user.leader)
         super(AssignAnnotatorForm, self).__init__(*args, **kwargs)
         self.fields["assigned"].queryset = annotators
+
+
+class AssignAnnotatorForm2(forms.Form):
+    annotator_2 = forms.ModelChoiceField(queryset=Annotator.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop("request")
+        annotators = Annotator.objects.filter(leader=request.user.leader)
+        super(AssignAnnotatorForm2, self).__init__(*args, **kwargs)
+        self.fields["annotator_2"].queryset = annotators
