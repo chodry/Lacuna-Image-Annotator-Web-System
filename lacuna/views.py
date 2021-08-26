@@ -127,7 +127,7 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
         annotator = Annotator.objects.get(user=self.request.user.id)
         annotator = annotator.annotate_all
 
-        queryset2 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+        query = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
 
         context = super(AnnotatorHomeView, self).get_context_data(**kwargs)
 
@@ -136,7 +136,9 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
             "cas": queryset.filter(crop=crop).count(),
             "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
             "annotator": annotator,
-            "second": queryset2,
+            "second": query,
+            "cas2": query.filter(crop=crop).count(),
+            "casAnn2": query.filter(crop=crop).filter(is_annotated2=True).count(),
 
         })
 
@@ -191,6 +193,7 @@ class UploadListView(LoginRequiredMixin, ListView):
             "crop": crop,
             "cas": queryset.filter(crop=crop).count(),
             "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
+            "casAnn2": queryset.filter(crop=crop).filter(is_annotated=True).filter(is_annotated2=True).count(),
 
             "cassavaUg": queryset2.filter(crop="Cassava").count(),
             "cassavaUg_A": queryset2.filter(crop="Cassava").filter(is_annotated=True).count(),
@@ -219,7 +222,9 @@ class UploadListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         upload = self.request.user.country
         crop = self.request.user.crop
-        return Upload.objects.filter(country=upload).filter(crop=crop)
+        queryset = Upload.objects.filter(country=upload).filter(crop=crop)
+        # print(queryset)
+        return queryset
 
 
 class AssignAnnotatorView(LoginRequiredMixin, FormView):
@@ -258,11 +263,15 @@ class AssignAnnotatorView2(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         annotator = form.cleaned_data["annotator_2"]
         upload = Upload.objects.get(id=self.kwargs["pk"])
-        upload.annotator_2 = annotator
-        cus = CustomUser.objects.get(username=annotator)
-        cus = cus.id
-        Annotator.objects.filter(user=cus).update(annotate_all=True)
-        upload.save()
+        assigned = upload.assigned
+        if assigned == annotator:
+            print("Same Annotator")
+        else:
+            upload.annotator_2 = annotator
+            cus = CustomUser.objects.get(username=annotator)
+            cus = cus.id
+            Annotator.objects.filter(user=cus).update(annotate_all=True)
+            upload.save()
         return super(AssignAnnotatorView2, self).form_valid(form)
 
 
@@ -345,6 +354,16 @@ def downloadV2(request, path):
     if os.path.exists(file_path):
         with open(file_path, 'rb')as fh:
             response = HttpResponse(fh.read(), content_type="application/annotatorUpload")
+            response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
+def downloadV3(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb')as fh:
+            response = HttpResponse(fh.read(), content_type="application/annotatorUpload2")
             response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
             return response
     raise Http404
