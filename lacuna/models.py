@@ -43,6 +43,7 @@ class Leader(models.Model):
 class Annotator(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     leader = models.ForeignKey(Leader, on_delete=models.CASCADE)
+    annotate_all = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -62,8 +63,11 @@ class Upload(models.Model):
     leader = models.CharField(max_length=1000, null=True, blank=True,)
     url = models.CharField(max_length=1000)
     assigned = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
+    annotator_2 = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     is_annotated = models.BooleanField(default=False)
+    is_annotated2 = models.BooleanField(default=False)
     adminUpload = models.FileField(upload_to='media', blank=True)
+    annotatorUpload2 = models.FileField(upload_to='media', blank=True)
     annotatorUpload = models.FileField(upload_to='media', blank=True)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

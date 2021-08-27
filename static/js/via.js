@@ -1099,14 +1099,22 @@ function _via_get_image_id(filename, size) {
 
 var folder = "lacuna";
 
+var annotation = "";
+
 function load_text_file(text_file, callback_function) {
   var uploads = JSON.parse(document.getElementById('cas').textContent);
   var annotated = JSON.parse(document.getElementById('mas').textContent);
-  var filex = text_file.name.replace(".txt", "")
-  if(uploads.includes(filex)){
+  var uploads2 = JSON.parse(document.getElementById('anno').textContent);
+  var annotated2 = JSON.parse(document.getElementById('john').textContent);
+
+  if(text_file.name.endsWith("txt")){
+    var filex = text_file.name.replace(".txt", "")
+    if(uploads.includes(filex)){
       if(annotated.includes(filex)){
         show_message('This file was already annotated by you: ' + text_file.name + ' ... ');
       }else {
+
+      annotation = "first"
 
       if (text_file) {
         var text_reader = new FileReader();
@@ -1128,8 +1136,53 @@ function load_text_file(text_file, callback_function) {
       }
 
 
+    }
+    else if (uploads2.includes(filex)){
+     if(annotated2.includes(filex)){
+        show_message('This file was already annotated for the second time by you: ' + text_file.name + ' ... ');
+      }else {
+
+      annotation = "second"
+
+      if (text_file) {
+        var text_reader = new FileReader();
+        text_reader.addEventListener( 'progress', function(e) {
+          show_message('Loading data from file : ' + text_file.name + ' ... ');
+        }, false);
+
+        text_reader.addEventListener( 'error', function() {
+          show_message('Error loading data text file :  ' + text_file.name + ' !');
+          callback_function('');
+        }, false);
+
+        text_reader.addEventListener( 'load', function() {
+          callback_function(text_reader.result);
+        }, false);
+        text_reader.readAsText(text_file, 'utf-8');
+      }
+      folder = filex;
+      }
   }else {
-    show_message('Not the same file as the one you downloaded : ' + text_file.name + ' ... ');
+      show_message('Not the same file as the one you downloaded : ' + text_file.name + ' ... ');
+    }
+  }
+  else{
+    if (text_file) {
+        var text_reader = new FileReader();
+        text_reader.addEventListener( 'progress', function(e) {
+          show_message('Loading data from file : ' + text_file.name + ' ... ');
+        }, false);
+
+        text_reader.addEventListener( 'error', function() {
+          show_message('Error loading data text file :  ' + text_file.name + ' !');
+          callback_function('');
+        }, false);
+
+        text_reader.addEventListener( 'load', function() {
+          callback_function(text_reader.result);
+        }, false);
+        text_reader.readAsText(text_file, 'utf-8');
+      }
   }
 
 }
@@ -10099,6 +10152,7 @@ $(document).ready(function () {
         formData.append('mydata', data_blob)  // Add blob to form data
         formData.append('fileName', fileUpload)
         formData.append('file', folder)
+        formData.append('annotated', annotation)
         // console.log(blob);
         console.log("Blob created");
         $.ajax({
