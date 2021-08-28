@@ -40,7 +40,7 @@ class AssignAnnotatorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
-        annotators = Annotator.objects.filter(leader=request.user.leader)
+        annotators = Annotator.objects.filter(leader=request.user.leader).filter(annotate_all=False)
         super(AssignAnnotatorForm, self).__init__(*args, **kwargs)
         self.fields["assigned"].queryset = annotators
 

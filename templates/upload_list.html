@@ -30,8 +30,8 @@
                     <table class="table_row">
                       <tbody class="rows_tb">
                         <tr class="rows_tr">
-                          <td class="rows_td">First Annotation</td>
-                          <td class="rows_tds">{{ casAnn }}</td>
+                          <td class="rows_td">Batches</td>
+                          <td class="rows_tds">{{ cas }}</td>
                         </tr>
                         <tr class="rows_tr">
                           <td class="rows_td annotated">Second Annotation</td>
@@ -61,10 +61,10 @@
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Assigned</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Annotation 1</a>
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Partially Annotated</a>
                       </li>
                        <li class="nav-item">
-                        <a class="nav-link" id="contact-tab2" data-toggle="tab" href="#contact2" role="tab" aria-controls="contact2" aria-selected="false">Annotation 2</a>
+                        <a class="nav-link" id="contact-tab2" data-toggle="tab" href="#contact2" role="tab" aria-controls="contact2" aria-selected="false">Fully Annotated</a>
                       </li>
                     </ul>
                 <div class="tab-content" id="myTabContent">
@@ -76,11 +76,10 @@
                               <th>Crop</th>
                               <th>Name</th>
                               <th>Country</th>
-                              <th>Assign Annotator</th>
+                              <th>Annotator 1</th>
                             </tr>
                           </thead>
                           <tbody>
-
                             {% for upload in uploads %}
                             {% if not upload.assigned %}
                             {% if not upload.is_annotated %}
@@ -89,10 +88,12 @@
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
-
+<!--                              {% if upload.assigned %}-->
+<!--                              <td>{{ upload.assigned }}</td>-->
+<!--                              {% else %}-->
                               <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
-
-<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+<!--                              {% endif %}-->
+<!--                              <td>{{ upload.annotator_2 }}</td>-->
                             </tr>
                             {% endif %}
                             {% endif %}
@@ -112,21 +113,22 @@
                               <th>Name</th>
                               <th>Country</th>
                               <th>Annotator</th>
-                              <th>Assigned on</th>
                               <th>Change Annotator</th>
+                              <th>Annotator 2</th>
+                              <th>Assigned on</th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for upload in uploads %}
-                            {% if upload.assigned and not upload.is_annotated %}
+                            {% if upload.assigned and not upload.is_annotated and not upload.is_annotated2 %}
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
                               <td>{{ upload.assigned }}</td>
-                               <td>{{ upload.last_updated }}</td>
                               <td><a href="{% url 'upload_assign' upload.pk %}" class="btn btn-info">Change Annotator</a></td>
-<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                              <td>{{ upload.annotator_2 }}</td>
+                              <td>{{ upload.last_updated }}</td>
                             </tr>
                             {% endif %}
                             {% endfor %}
@@ -145,29 +147,29 @@
                               <th>Annotator 1</th>
                               <th>Download Json file</th>
                               <th>Annotator 2</th>
+                              <th>Download Json file</th>
 
                             </tr>
                           </thead>
                           <tbody>
-                            {% for upload in uploads %}
-                            {% if upload.is_annotated %}
-                            {% if not upload.is_annotated2 %}
+                            {% for partial in partials %}
                             <tr>
-                              <td>{{ upload.crop }}</td>
-                              <td>{{ upload.url }}</td>
-                              <td>{{ upload.country }}</td>
-                              <td>{{ upload.assigned }}</td>
-                              <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
-                              {% if not upload.annotator_2 %}
-                                <td><a href="{% url 'upload_assign2' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
+                              <td>{{ partial.crop }}</td>
+                              <td>{{ partial.url }}</td>
+                              <td>{{ partial.country }}</td>
+                              <td>{{ partial.assigned }}</td>
+                              {% if partial.annotatorUpload %}
+                              <td><a href="{{ partial.annotatorUpload.url }}" download="{{ partial.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+                              {% else %}
+                              <td>None</td>
                               {% endif %}
-                              {% if upload.annotator_2 %}
-                                <td>{{ upload.annotator_2 }}</td>
+                              <td>{{ partial.annotator_2 }}</td>
+                              {% if partial.annotatorUpload_2 %}
+                              <td><a href="{{ partial.annotatorUpload_2.url }}" download="{{ partial.annotatorUpload_2.url }}" class="btn btn-info">Download</a></td>
+                              {% else %}
+                              <td>None</td>
                               {% endif %}
-
                             </tr>
-                            {% endif %}
-                            {% endif %}
                             {% endfor %}
                           </tbody>
                           </table>
@@ -182,6 +184,7 @@
                               <th>Name</th>
                               <th>Country</th>
                               <th>Annotator 1</th>
+                              <th>Download Json file</th>
                               <th>Annotator 2</th>
                               <th>Download Json file</th>
 
@@ -197,13 +200,9 @@
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
                               <td>{{ upload.assigned }}</td>
-                              {% if not upload.annotator_2 %}
-                                <td><a href="{% url 'upload_assign2' upload.pk %}" class="btn btn-info">Assign Annotator</a></td>
-                              {% endif %}
-                              {% if upload.annotator_2 %}
-                                <td>{{ upload.annotator_2 }}</td>
-                              {% endif %}
-                              <td><a href="{{ upload.annotatorUpload2.url }}" download="{{ upload.annotatorUpload2.url }}" class="btn btn-info">Download</a></td>
+                              <td><a href="{{ upload.annotatorUpload.url }}" download="{{ upload.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+                              <td>{{ upload.annotator_2 }}</td>
+                              <td><a href="{{ upload.annotatorUpload_2.url }}" download="{{ upload.annotatorUpload_2.url }}" class="btn btn-info">Download</a></td>
 
 
                             </tr>

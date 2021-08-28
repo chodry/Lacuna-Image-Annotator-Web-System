@@ -67,7 +67,7 @@ class Upload(models.Model):
     is_annotated = models.BooleanField(default=False)
     is_annotated2 = models.BooleanField(default=False)
     adminUpload = models.FileField(upload_to='media', blank=True)
-    annotatorUpload2 = models.FileField(upload_to='media', blank=True)
+    annotatorUpload_2 = models.FileField(upload_to='media', blank=True)
     annotatorUpload = models.FileField(upload_to='media', blank=True)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

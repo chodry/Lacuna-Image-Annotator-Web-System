@@ -14,6 +14,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 import json
 from django.core.files.storage import default_storage
+from django.db.models import Q
 
 
 # Create your views here.
@@ -187,13 +188,25 @@ class UploadListView(LoginRequiredMixin, ListView):
         queryset4 = Upload.objects.filter(country=Country.objects.get(country='Namibia'))
         queryset5 = Upload.objects.filter(country=Country.objects.get(country='Ghana'))
 
+        first = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated=False).filter(
+            is_annotated2=True)
+        print(first)
+        first2 = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated=True).filter(
+            is_annotated2=False)
+        print(first2)
+        partial = first | first2
+        print(partial)
+        # partial = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated2=False).filter(is_annotated=True))
+        # print(partial)
+
         context = super(UploadListView, self).get_context_data(**kwargs)
 
         context.update({
             "crop": crop,
             "cas": queryset.filter(crop=crop).count(),
             "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
-            "casAnn2": queryset.filter(crop=crop).filter(is_annotated=True).filter(is_annotated2=True).count(),
+            "casAnn2": queryset.filter(crop=crop).filter(is_annotated2=True).count(),
+            "partials": partial,
 
             "cassavaUg": queryset2.filter(crop="Cassava").count(),
             "cassavaUg_A": queryset2.filter(crop="Cassava").filter(is_annotated=True).count(),
@@ -223,7 +236,6 @@ class UploadListView(LoginRequiredMixin, ListView):
         upload = self.request.user.country
         crop = self.request.user.crop
         queryset = Upload.objects.filter(country=upload).filter(crop=crop)
-        # print(queryset)
         return queryset
 
 
@@ -242,8 +254,11 @@ class AssignAnnotatorView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         annotator = form.cleaned_data["assigned"]
         upload = Upload.objects.get(id=self.kwargs["pk"])
+        leader = Leader.objects.get(user=self.request.user)
+        general_Annotator = Annotator.objects.filter(leader=leader).get(annotate_all=True)
         upload.assigned = annotator
         upload.leader = self.request.user.username
+        upload.annotator_2 = general_Annotator
         upload.save()
         return super(AssignAnnotatorView, self).form_valid(form)
 
@@ -335,7 +350,7 @@ def upload_file(request):
             Upload.objects.filter(url=folder).update(annotatorUpload=path)
         else:
             Upload.objects.filter(url=folder).update(is_annotated2=True)
-            Upload.objects.filter(url=folder).update(annotatorUpload2=path)
+            Upload.objects.filter(url=folder).update(annotatorUpload_2=path)
         # print(path)
     return HttpResponse("File received")
 
@@ -363,7 +378,7 @@ def downloadV3(request, path):
     file_path = os.path.join(settings.MEDIA_ROOT, path)
     if os.path.exists(file_path):
         with open(file_path, 'rb')as fh:
-            response = HttpResponse(fh.read(), content_type="application/annotatorUpload2")
+            response = HttpResponse(fh.read(), content_type="application/annotatorUpload_2")
             response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
             return response
     raise Http404
