@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -63,10 +63,10 @@ class LeaderCreateView(LoginRequiredMixin, CreateView):
         send_mail(
             subject="Lacuna Annotation Project",
             message="You were added as a Team Leader for " + user.crop + "on the Lacuna Annotation Project. Your "
-                    "username is: " + user.username + "\n Please access our web app from this link "
-                                                      "http://104.155.175.230/ "
-                    "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password " 
-                    "then log in.",
+                                                                         "username is: " + user.username + "\n Please access our web app from this link "
+                                                                                                           "http://104.155.175.230/ "
+                                                                                                           "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password "
+                                                                                                                                                                                    "then log in.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email]
         )
@@ -104,10 +104,10 @@ class AnnotatorCreateView(LoginRequiredMixin, CreateView):
         send_mail(
             subject="Lacuna Annotation Project",
             message="You were added as an Annotator for " + user.crop + "on the Lacuna Annotation Project. Your "
-                    "username is: " + user.username + "\n Please access our web app from this link "
-                    "http://104.155.175.230/ "
-                    "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password "
-                    "then log in.",
+                                                                        "username is: " + user.username + "\n Please access our web app from this link "
+                                                                                                          "http://104.155.175.230/ "
+                                                                                                          "then click Forgot Password. \n Then provide your email " + user.email + " to reset your password "
+                                                                                                                                                                                   "then log in.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email]
         )
@@ -123,23 +123,30 @@ class AnnotatorHomeView(LoginRequiredMixin, ListView):
         upload = self.request.user.country
         assigned = self.request.user.annotator
         crop = self.request.user.crop
-        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
 
-        annotator = Annotator.objects.get(user=self.request.user.id)
-        annotator = annotator.annotate_all
+        # annotator = Annotator.objects.get(user=self.request.user.id)
+        annotator = assigned.annotate_all
 
-        query = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+        if annotator:
+            query = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+            query2 = query.filter(is_annotated2=True).exclude(annotated2_right='Good Annotations')
+            query2_1 = query.filter(is_annotated2=True).filter(annotated2_right='Good Annotations')
+        else:
+            query = Upload.objects.filter(country=upload).filter(assigned=assigned)
+            query2 = query.filter(is_annotated=True).exclude(annotated_right='Good Annotations')
+            query2_1 = query.filter(is_annotated=True).filter(annotated_right='Good Annotations')
 
         context = super(AnnotatorHomeView, self).get_context_data(**kwargs)
 
         context.update({
             "crop": crop,
-            "cas": queryset.filter(crop=crop).count(),
-            "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
+            "casAnn": query2_1.filter(crop=crop).count(),
+            "casHalf": query2.filter(crop=crop).count(),
             "annotator": annotator,
             "second": query,
             "cas2": query.filter(crop=crop).count(),
-            "casAnn2": query.filter(crop=crop).filter(is_annotated2=True).count(),
+            "partials": query2,
+            "fulls": query2_1,
 
         })
 
@@ -188,25 +195,31 @@ class UploadListView(LoginRequiredMixin, ListView):
         queryset4 = Upload.objects.filter(country=Country.objects.get(country='Namibia'))
         queryset5 = Upload.objects.filter(country=Country.objects.get(country='Ghana'))
 
-        first = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated=False).filter(
-            is_annotated2=True)
-        print(first)
-        first2 = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated=True).filter(
-            is_annotated2=False)
-        print(first2)
-        partial = first | first2
-        print(partial)
-        # partial = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated2=False).filter(is_annotated=True))
-        # print(partial)
+        # first = queryset.filter(crop=crop).filter(assigned__isnull=False).filter(is_annotated=False)\
+        #     .filter(is_annotated2=True)
+        # second = queryset.filter(crop=crop).filter(annotator_2__isnull=False).filter(is_annotated2=False) \
+        #     .filter(is_annotated=True)
+
+        full_annotations = queryset.filter(crop=crop).filter(annotated_right="Good Annotations")\
+            .filter(annotated2_right="Good Annotations")
+        # print(full_annotations)
+
+        partial1 = queryset.filter(crop=crop).filter(is_annotated=True).exclude(annotated_right="Good Annotations")
+        partial2 = queryset.filter(crop=crop).filter(is_annotated2=True).exclude(annotated2_right="Good Annotations")
+        partials = partial1 | partial2
+        print(partial1)
+        print(partial2)
+        print(partials)
 
         context = super(UploadListView, self).get_context_data(**kwargs)
 
         context.update({
             "crop": crop,
+            "fulls": full_annotations,
             "cas": queryset.filter(crop=crop).count(),
             "casAnn": queryset.filter(crop=crop).filter(is_annotated=True).count(),
             "casAnn2": queryset.filter(crop=crop).filter(is_annotated2=True).count(),
-            "partials": partial,
+            "partials": partials,
 
             "cassavaUg": queryset2.filter(crop="Cassava").count(),
             "cassavaUg_A": queryset2.filter(crop="Cassava").filter(is_annotated=True).count(),
@@ -303,10 +316,20 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
         queryset3 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
         queryset4 = queryset3.filter(is_annotated2=True)
 
+        # going = queryset4.first()
+        # nex = json.dumps(str(going))
+        # f = open('media_cdn/media/matty_8Jul2021_9h22m.json', 'r')
+        # man = f.read()
+
         chodrine = generateList(queryset)
         mutebi = generateList(queryset2)
         musisi = generateList(queryset3)
         john = generateList(queryset4)
+
+        if assigned.annotate_all:
+            query = queryset4.filter(annotator2Update=False).filter(annotated2_right='Bad Annotations')
+        else:
+            query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
 
         context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
@@ -315,9 +338,57 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
             "maz": mutebi,
             "anno": musisi,
             "john": john,
+            "querying": query,
+            # "going": going,
         })
 
         return context
+
+    def post(self, request):
+        if request.method == 'POST':
+            if request.POST.get('action') == 'upload1':
+                blob = request.FILES.get('mydata')
+                fileName = request.POST.get('fileName')
+                folder = request.POST.get('file')
+                annotation = request.POST.get('annotated')
+                path = default_storage.save('media/' + fileName + ".json", blob)
+                # url = Upload.objects.get(url=folder)
+                if annotation == "first":
+                    Upload.objects.filter(url=folder).update(is_annotated=True, annotatorUpload=path)
+                elif annotation == "second":
+                    Upload.objects.filter(url=folder).update(is_annotated2=True, annotatorUpload_2=path)
+                else:
+                    pk = annotation.replace("review", "")
+                    assigned = self.request.user.annotator
+                    upload = Upload.objects.filter(id=pk)
+
+                    if assigned.annotate_all:
+                        upload.update(annotatorUpload_2=path, annotator2Update=True)
+                    else:
+                        upload.update(annotatorUpload=path, annotatorUpdate=True)
+
+                json_data = "uploaded"
+
+            else:
+                pk = request.POST.get('pk')
+                assigned = self.request.user.annotator
+                query = Upload.objects.get(id=pk)
+
+                if assigned.annotate_all:
+                    json_file = query.annotatorUpload_2.name
+                    f = open('media_cdn/' + json_file, 'r')
+                    json_data = json.load(f)
+                else:
+                    json_file = query.annotatorUpload.name
+                    f = open('media_cdn/' + json_file, 'r')
+                    json_data = json.load(f)
+
+            my_context = {
+                "upload": json_data
+            }
+
+            return HttpResponse(json.dumps(my_context, indent=4, sort_keys=True, default=str),
+                                content_type='application/json')
 
 
 def generateList(queryset):
@@ -340,17 +411,19 @@ def upload_file(request):
         annotation = request.POST.get('annotated')
         # print(chod)
         # File type is : InMemoryUploadedFile, can be saved in many ways, here I use Django's inbuilt default_storage
-        print(type(blob))
-        print(folder)
+        # print(type(blob))
+        # print(folder)
         # Define how you want to save and your save path for the files
         path = default_storage.save('media/' + fileName + ".json", blob)
         # url = Upload.objects.get(url=folder)
         if annotation == "first":
-            Upload.objects.filter(url=folder).update(is_annotated=True)
-            Upload.objects.filter(url=folder).update(annotatorUpload=path)
+            Upload.objects.filter(url=folder).update(is_annotated=True, annotatorUpload=path)
+        elif annotation == "second":
+            Upload.objects.filter(url=folder).update(is_annotated2=True, annotatorUpload_2=path)
         else:
-            Upload.objects.filter(url=folder).update(is_annotated2=True)
-            Upload.objects.filter(url=folder).update(annotatorUpload_2=path)
+            pk = annotation.replace("review", "")
+            upload = Upload.objects.filter(id=pk)
+
         # print(path)
     return HttpResponse("File received")
 
@@ -382,3 +455,27 @@ def downloadV3(request, path):
             response['Content-Disposition'] = 'inline;filename=' + os.path.basename(file_path)
             return response
     raise Http404
+
+
+def update1(request, pk):
+    upload = Upload.objects.filter(id=pk)
+    upload.update(annotated_right='Good Annotations', annotatorUpdate=True)
+    return redirect("/")
+
+
+def update01(request, pk):
+    upload = Upload.objects.filter(id=pk)
+    upload.update(annotated2_right='Good Annotations', annotator2Update=True)
+    return redirect("/")
+
+
+def update2(request, pk):
+    upload = Upload.objects.filter(id=pk)
+    upload.update(annotated_right='Bad Annotations', annotatorUpdate=False)
+    return redirect("/")
+
+
+def update02(request, pk):
+    upload = Upload.objects.filter(id=pk)
+    upload.update(annotated2_right='Bad Annotations', annotator2Update=False)
+    return redirect("/")

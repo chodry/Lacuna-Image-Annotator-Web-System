@@ -58,6 +58,10 @@ class Upload(models.Model):
         ('Maize', 'Maize'),
         ('Pearl_millet', 'Pearl Millet'),
     )
+    Annotated = (
+        ('Good Annotations', 'Good Annotations'),
+        ('Bad Annotations', 'Bad Annotations'),
+    )
     crop = models.CharField(choices=CROPS, max_length=100)
     country = models.ForeignKey(Country, models.CASCADE)
     leader = models.CharField(max_length=1000, null=True, blank=True,)
@@ -65,9 +69,13 @@ class Upload(models.Model):
     assigned = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
     annotator_2 = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     is_annotated = models.BooleanField(default=False)
+    annotated_right = models.CharField(max_length=255, blank=True)
     is_annotated2 = models.BooleanField(default=False)
+    annotatorUpdate = models.BooleanField(default=False)
+    annotated2_right = models.CharField(max_length=255, blank=True)
     adminUpload = models.FileField(upload_to='media', blank=True)
     annotatorUpload_2 = models.FileField(upload_to='media', blank=True)
+    annotator2Update = models.BooleanField(default=False)
     annotatorUpload = models.FileField(upload_to='media', blank=True)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 

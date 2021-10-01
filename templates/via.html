@@ -18,6 +18,7 @@
     {{ maz | json_script:"mas" }}
     {{ anno | json_script:"anno" }}
     {{ john | json_script:"john" }}
+<!--    <p style="display:none" id="my_file">{{MEDIA_URL}}{{ going }}</p>-->
     <!--
         SVG icon set definitions
         Material icons downloaded from https://material.io/icons
@@ -195,9 +196,13 @@
             </ul>
           </li>
 
-          <li>Account
+          <li>Annotations to Review
             <ul>
-              <li><a href="{% url 'logout' %}">Logout</a></li>
+<!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->
+                {% for review in querying %}
+                  {% csrf_token %}
+                  <li id="query" value="{{ review.pk }}">{{ review.url }}</li>
+                {% endfor %}
             </ul>
           </li>
         </ul>

@@ -145,9 +145,11 @@
                               <th>Name</th>
                               <th>Country</th>
                               <th>Annotator 1</th>
-                              <th>Download Json file</th>
+                              <th>Json file</th>
+                              <th>Annotations</th>
                               <th>Annotator 2</th>
-                              <th>Download Json file</th>
+                              <th>Json file</th>
+                              <th>Annotations</th>
 
                             </tr>
                           </thead>
@@ -159,14 +161,58 @@
                               <td>{{ partial.country }}</td>
                               <td>{{ partial.assigned }}</td>
                               {% if partial.annotatorUpload %}
-                              <td><a href="{{ partial.annotatorUpload.url }}" download="{{ partial.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+                                {% if partial.annotatorUpdate %}
+                                    <td><a href="{{ partial.annotatorUpload.url }}" download="{{ partial.annotatorUpload.url }}" class="btn btn-success">Download</a></td>
+                                {% else %}
+                                    <td><a href="{{ partial.annotatorUpload.url }}" download="{{ partial.annotatorUpload.url }}" class="btn btn-info">Download</a></td>
+                                {% endif %}
+<!--                              <td><a href="{% url 'update1' partial.pk %}">Update</a></td>-->
+                                {% if partial.annotated_right == 'Good Annotations' %}
+                                <td>
+                                  <a href="{% url 'update1' partial.pk %}" class="btn btn-info disabled" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update2' partial.pk %}" class="btn btn-danger" style="font-size:10px">Bad</a>
+                                </td>
+                                {% elif partial.annotated_right == 'Bad Annotations' %}
+                                <td>
+                                  <a href="{% url 'update1' partial.pk %}" class="btn btn-info" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update2' partial.pk %}" class="btn btn-danger disabled" style="font-size:10px">Bad</a>
+                                </td>
+                                {% else %}
+                                 <td>
+                                  <a href="{% url 'update1' partial.pk %}" class="btn btn-info" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update2' partial.pk %}" class="btn btn-danger" style="font-size:10px">Bad</a>
+                                </td>
+                                {% endif %}
+
                               {% else %}
+                              <td>None</td>
                               <td>None</td>
                               {% endif %}
                               <td>{{ partial.annotator_2 }}</td>
                               {% if partial.annotatorUpload_2 %}
-                              <td><a href="{{ partial.annotatorUpload_2.url }}" download="{{ partial.annotatorUpload_2.url }}" class="btn btn-info">Download</a></td>
+                                  {% if partial.annotator2Update %}
+                                    <td><a href="{{ partial.annotatorUpload_2.url }}" download="{{ partial.annotatorUpload_2.url }}" class="btn btn-success">Download</a></td>
+                                  {% else %}
+                                      <td><a href="{{ partial.annotatorUpload_2.url }}" download="{{ partial.annotatorUpload_2.url }}" class="btn btn-info">Download</a></td>
+                                  {% endif %}
+                                {% if partial.annotated2_right == 'Good Annotations' %}
+                                <td>
+                                  <a href="{% url 'update01' partial.pk %}" class="btn btn-info disabled" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update02' partial.pk %}" class="btn btn-danger" style="font-size:10px">Bad</a>
+                                </td>
+                                {% elif partial.annotated2_right == 'Bad Annotations' %}
+                                <td>
+                                  <a href="{% url 'update01' partial.pk %}" class="btn btn-info" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update02' partial.pk %}" class="btn btn-danger disabled" style="font-size:10px">Bad</a>
+                                </td>
+                                {% else %}
+                                 <td>
+                                  <a href="{% url 'update01' partial.pk %}" class="btn btn-info" style="font-size:10px">Good</a>
+                                  <a href="{% url 'update02' partial.pk %}" class="btn btn-danger" style="font-size:10px">Bad</a>
+                                </td>
+                                {% endif %}
                               {% else %}
+                              <td>None</td>
                               <td>None</td>
                               {% endif %}
                             </tr>
@@ -192,9 +238,9 @@
                             </tr>
                           </thead>
                           <tbody>
-                            {% for upload in uploads %}
-                            {% if upload.is_annotated %}
-                            {% if upload.is_annotated2 %}
+                            {% for upload in fulls %}
+<!--                            {% if upload.is_annotated %}-->
+<!--                            {% if upload.is_annotated2 %}-->
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
@@ -206,8 +252,8 @@
 
 
                             </tr>
-                            {% endif %}
-                            {% endif %}
+<!--                            {% endif %}-->
+<!--                            {% endif %}-->
                             {% endfor %}
                           </tbody>
                           </table>

@@ -9,25 +9,18 @@
                     <h5>{{ crop }}</h5>
                     <table class="table_row">
                       <tbody class="rows_tb">
-                      {% if annotator == False %}
                         <tr class="rows_tr">
                           <td class="rows_td">Batches</td>
-                          <td class="rows_tds">{{ cas }}</td>
+                          <td class="rows_tds">{{ cas2 }}</td>
+                        </tr>
+                         <tr class="rows_tr">
+                          <td class="rows_td annotated">For Review</td>
+                          <td class="rows_tds annotated">{{ casHalf }}</td>
                         </tr>
                         <tr class="rows_tr">
                           <td class="rows_td annotated">Annotated</td>
                           <td class="rows_tds annotated">{{ casAnn }}</td>
                         </tr>
-                       {% else %}
-                        <tr class="rows_tr">
-                          <td class="rows_td">Batches</td>
-                          <td class="rows_tds">{{ cas2 }}</td>
-                        </tr>
-                        <tr class="rows_tr">
-                          <td class="rows_td annotated">Annotated</td>
-                          <td class="rows_tds annotated">{{ casAnn2 }}</td>
-                        </tr>
-                       {% endif %}
                       </tbody>
                     </table>
 
@@ -48,6 +41,9 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                       <li class="nav-item">
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Assigned</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="home-tab2" data-toggle="tab" href="#home2" role="tab" aria-controls="home2" aria-selected="true">Awaiting Review</a>
                       </li>
                       <li class="nav-item">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Annotated</a>
@@ -107,49 +103,90 @@
                           </table>
                         </div>
                   </div>
-                  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                          <div id="tables2">
-                          <table class="table table-bordered table_annotator">
-                          <thead class="thead-light">
-                            <tr>
-                              <th>Crop</th>
-                              <th>Name</th>
-                              <th>Country</th>
-                              <th>Completed On</th>
-                            </tr>
-                          </thead>
-                          <tbody>
+                  <div class="tab-pane fade" id="home2" role="tabpanel" aria-labelledby="home-tab2">
+                       <div id="tables3">
+                        <table class="table table-bordered table_annotator">
+                            <thead class="thead-light">
+                        <tr>
+                          <th>Crop</th>
+                          <th>Name</th>
+                          <th>Country</th>
+                          <th>Submitted On</th>
+                        </tr>
+                      </thead>
+                            <tbody>
                             {% if annotator == False %}
-                            {% for upload in uploads %}
-                            {% if upload.is_annotated %}
+                            {% for upload in partials %}
+    <!--                            {% if upload.is_annotated %}-->
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
                               <td>{{ upload.last_updated }}</td>
-<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+    <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
                             </tr>
-                            {% endif %}
+    <!--                            {% endif %}-->
                             {% endfor %}
 
                             {% else %}
-                            {% for upload in second %}
-                            {% if upload.is_annotated2 %}
+                            {% for upload in partials %}
+    <!--                            {% if upload.is_annotated2 %}-->
                             <tr>
                               <td>{{ upload.crop }}</td>
                               <td>{{ upload.url }}</td>
                               <td>{{ upload.country }}</td>
                               <td>{{ upload.last_updated }}</td>
-<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+    <!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
                             </tr>
-                            {% endif %}
+    <!--                            {% endif %}-->
                             {% endfor %}
                             {% endif %}
                           </tbody>
-                          </table>
-                        </div>
+                        </table>
+                      </div>
                   </div>
+                  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                      <div id="tables2">
+                        <table class="table table-bordered table_annotator">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Crop</th>
+                          <th>Name</th>
+                          <th>Country</th>
+                          <th>Completed On</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% if annotator == False %}
+                        {% for upload in fulls %}
+<!--                            {% if upload.is_annotated %}-->
+                        <tr>
+                          <td>{{ upload.crop }}</td>
+                          <td>{{ upload.url }}</td>
+                          <td>{{ upload.country }}</td>
+                          <td>{{ upload.last_updated }}</td>
+<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                        </tr>
+<!--                            {% endif %}-->
+                        {% endfor %}
 
+                        {% else %}
+                        {% for upload in fulls %}
+<!--                            {% if upload.is_annotated2 %}-->
+                        <tr>
+                          <td>{{ upload.crop }}</td>
+                          <td>{{ upload.url }}</td>
+                          <td>{{ upload.country }}</td>
+                          <td>{{ upload.last_updated }}</td>
+<!--                              <td><a href="" class="btn btn-info btn-sm">Assign Batches</a></td>-->
+                        </tr>
+<!--                            {% endif %}-->
+                        {% endfor %}
+                        {% endif %}
+                      </tbody>
+                      </table>
+                      </div>
+                  </div>
                   </div>
                 </div>
               </div>

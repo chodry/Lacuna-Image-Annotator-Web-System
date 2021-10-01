@@ -10138,6 +10138,7 @@ function myFunction2() {
 
 var blob = new Blob(["Welcome to Websparrow.org."]);
 
+
 $(document).ready(function () {
 
     $("#upload").click(function () {
@@ -10153,18 +10154,21 @@ $(document).ready(function () {
         formData.append('fileName', fileUpload)
         formData.append('file', folder)
         formData.append('annotated', annotation)
+        formData.append('action', 'upload1')
         // console.log(blob);
         console.log("Blob created");
         $.ajax({
             method: 'POST',
-            url: "/fileUpload/",
+            url: "/annotation/",
             data: formData,
             processData: false,
             contentType : false,
-            success: function () {
-                console.log("File posted successfully");
+            success: function (resp) {
+                 console.log("File posted successfully");
+//                 dat = resp.upload
+//                 console.log(dat)
                  document.querySelector(".popup").style.display = "none";
-                },
+            },
             error: function (error) {
                 console.log("Error");
             }
@@ -10172,7 +10176,52 @@ $(document).ready(function () {
 
     });
 
+});
 
+//var going = JSON.parse(document.getElementById('going').textContent);
+//console.log(going)
+//
+//var filing = document.getElementById('my_file').textContent
+//console.log(filing)
 
+$(document).ready(function () {
+
+    $("#query").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+         var pk = document.getElementById('query').value
+         folder = document.getElementById('query').textContent
+//         console.log(url)
+
+        var formData = new FormData();
+        formData.append('pk', pk)
+        formData.append('action', 'upload2')
+
+        $.ajax({
+            method: 'POST',
+            url: "/annotation/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function (resp) {
+                console.log("pk posted successfully");
+                upload = resp.upload
+                console.log(upload);
+                var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
+                data_blob.name = folder + ".json"
+                console.log(data_blob)
+                load_text_file(data_blob, project_open_parse_json_file);
+                annotation = "review" + pk
+            },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
 
 });

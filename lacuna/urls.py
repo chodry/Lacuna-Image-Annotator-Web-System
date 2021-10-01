@@ -3,13 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
 from django.views.static import serve
-from .views import (
-    HomePageView, CountryCreateView, LandingPageView,
-    UploadCreateView, UploadListView, AssignAnnotatorView, AssignAnnotatorView2,
-    LeaderCreateView, LeaderListView,
-    AnnotatorListView, AnnotatorCreateView, AnnotatorHomeView,
-    AnnotatorPageView, upload_file, DownloadList,
-)
+from .views import *
 
 urlpatterns = [
     path('home', HomePageView.as_view(), name='home'),
@@ -28,6 +22,10 @@ urlpatterns = [
     path('annotation_home/', AnnotatorHomeView.as_view(), name='annotators_home'),
     path('fileUpload/', upload_file, name='upload_file'),
     path('downl/', DownloadList.as_view(), name='downloads'),
+    path('update1/<int:pk>', update1, name='update1'),
+    path('update2/<int:pk>', update2, name='update2'),
+    path('update01/<int:pk>', update01, name='update01'),
+    path('update02/<int:pk>', update02, name='update02'),
 ]
 
 if settings.DEBUG:
