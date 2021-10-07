@@ -196,6 +196,15 @@
             </ul>
           </li>
 
+          <li>Load Files
+            <ul>
+              {% for load in query2 %}
+                  {% csrf_token %}
+                  <li id="query2" value="{{ load.pk }}">{{ load.url }}</li>
+                {% endfor %}
+            </ul>
+          </li>
+
           <li>Annotations to Review
             <ul>
 <!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->

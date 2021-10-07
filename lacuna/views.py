@@ -200,16 +200,20 @@ class UploadListView(LoginRequiredMixin, ListView):
         # second = queryset.filter(crop=crop).filter(annotator_2__isnull=False).filter(is_annotated2=False) \
         #     .filter(is_annotated=True)
 
-        full_annotations = queryset.filter(crop=crop).filter(annotated_right="Good Annotations")\
+        full_annotations = queryset.filter(crop=crop).filter(annotated_right="Good Annotations") \
             .filter(annotated2_right="Good Annotations")
         # print(full_annotations)
 
         partial1 = queryset.filter(crop=crop).filter(is_annotated=True).exclude(annotated_right="Good Annotations")
+        partial3 = queryset.filter(crop=crop).filter(is_annotated=False).filter(is_annotated2=True)
         partial2 = queryset.filter(crop=crop).filter(is_annotated2=True).exclude(annotated2_right="Good Annotations")
-        partials = partial1 | partial2
-        print(partial1)
-        print(partial2)
-        print(partials)
+        partial4 = queryset.filter(crop=crop).filter(is_annotated2=False).filter(is_annotated=True)
+        partials = partial1 | partial2 | partial3 | partial4
+        # print(partial1)
+        # print(partial2)
+        # print(partial3)
+        # print(partial4)
+        # print(partials)
 
         context = super(UploadListView, self).get_context_data(**kwargs)
 
@@ -328,8 +332,10 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
 
         if assigned.annotate_all:
             query = queryset4.filter(annotator2Update=False).filter(annotated2_right='Bad Annotations')
+            query2 = queryset3.filter(is_annotated2=False)
         else:
             query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
+            query2 = queryset.filter(is_annotated=False)
 
         context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
@@ -339,6 +345,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
             "anno": musisi,
             "john": john,
             "querying": query,
+            "query2": query2,
             # "going": going,
         })
 
@@ -357,7 +364,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                     Upload.objects.filter(url=folder).update(is_annotated=True, annotatorUpload=path)
                 elif annotation == "second":
                     Upload.objects.filter(url=folder).update(is_annotated2=True, annotatorUpload_2=path)
-                else:
+                elif annotation.startswith('review'):
                     pk = annotation.replace("review", "")
                     assigned = self.request.user.annotator
                     upload = Upload.objects.filter(id=pk)
@@ -366,10 +373,19 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                         upload.update(annotatorUpload_2=path, annotator2Update=True)
                     else:
                         upload.update(annotatorUpload=path, annotatorUpdate=True)
+                else:
+                    pk = annotation.replace("annotated", "")
+                    assigned = self.request.user.annotator
+                    upload = Upload.objects.filter(id=pk)
+
+                    if assigned.annotate_all:
+                        upload.update(annotatorUpload_2=path, is_annotated2=True)
+                    else:
+                        upload.update(annotatorUpload=path, is_annotated=True)
 
                 json_data = "uploaded"
 
-            else:
+            elif request.POST.get('action') == 'upload2':
                 pk = request.POST.get('pk')
                 assigned = self.request.user.annotator
                 query = Upload.objects.get(id=pk)
@@ -382,6 +398,15 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                     json_file = query.annotatorUpload.name
                     f = open('media_cdn/' + json_file, 'r')
                     json_data = json.load(f)
+
+            else:
+                pk = request.POST.get('pk')
+                query = Upload.objects.get(id=pk)
+                text_file = query.adminUpload.name
+                f = open('media_cdn/' + text_file, 'r')
+                data = f.read()
+                print(data)
+                json_data = data
 
             my_context = {
                 "upload": json_data

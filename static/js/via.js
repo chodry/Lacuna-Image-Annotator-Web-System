@@ -10225,3 +10225,45 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).ready(function () {
+
+    $("#query2").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+         var pk = document.getElementById('query2').value
+         folder = document.getElementById('query2').textContent
+//         console.log(url)
+
+        var formData = new FormData();
+        formData.append('pk', pk)
+        formData.append('action', 'upload3')
+
+        $.ajax({
+            method: 'POST',
+            url: "/annotation/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function (resp) {
+                console.log("pk posted successfully");
+                upload = resp.upload
+                console.log(upload);
+                var data_blob = new Blob([upload], {type: 'text/plain;charset=utf-8'});
+                data_blob.name = folder + ".txt"
+                console.log(data_blob)
+                load_text_file(data_blob, import_files_url_from_csv);
+                annotation = "annotated" + pk
+            },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
+
+});
