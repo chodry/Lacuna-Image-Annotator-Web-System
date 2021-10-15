@@ -10211,7 +10211,7 @@ $(document).ready(function () {
             contentType : false,
             success: function (resp) {
                 console.log("pk posted successfully");
-                upload = resp.upload
+                var upload = resp.upload
 //                console.log(upload);
                 var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
                 data_blob.name = folder + ".json"
@@ -10256,7 +10256,7 @@ $(document).ready(function () {
             contentType : false,
             success: function (resp) {
                 console.log("pk posted successfully");
-                upload = resp.upload
+                var upload = resp.upload
 //                console.log(upload);
                 var data_blob = new Blob([upload], {type: 'text/plain;charset=utf-8'});
                 data_blob.name = folder + ".txt"
