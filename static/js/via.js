@@ -10193,8 +10193,10 @@ $(document).ready(function () {
             }
         });
 
-         var pk = document.getElementById('query').value
-         folder = document.getElementById('query').textContent
+//         var pk = document.getElementById('query').value
+//         folder = document.getElementById('query').textContent
+         var pk = $(this).val();
+         folder = $(this).text();
 //         console.log(url)
 
         var formData = new FormData();
@@ -10210,10 +10212,10 @@ $(document).ready(function () {
             success: function (resp) {
                 console.log("pk posted successfully");
                 upload = resp.upload
-                console.log(upload);
+//                console.log(upload);
                 var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
                 data_blob.name = folder + ".json"
-                console.log(data_blob)
+//                console.log(data_blob)
                 load_text_file(data_blob, project_open_parse_json_file);
                 annotation = "review" + pk
             },
@@ -10228,16 +10230,19 @@ $(document).ready(function () {
 
 $(document).ready(function () {
 
-    $("#query2").click(function () {
+    $(".query2").click(function () {
+//        console.log("good")
         $.ajaxSetup({
             headers: {
                 "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
             }
         });
 
-         var pk = document.getElementById('query2').value
-         folder = document.getElementById('query2').textContent
-//         console.log(url)
+//         var pk = document.querySelector('.query2').value
+//         folder = document.querySelector('.query2').textContent
+         var pk = $(this).val();
+         folder = $(this).text();
+//         console.log(folder)
 
         var formData = new FormData();
         formData.append('pk', pk)
@@ -10252,10 +10257,10 @@ $(document).ready(function () {
             success: function (resp) {
                 console.log("pk posted successfully");
                 upload = resp.upload
-                console.log(upload);
+//                console.log(upload);
                 var data_blob = new Blob([upload], {type: 'text/plain;charset=utf-8'});
                 data_blob.name = folder + ".txt"
-                console.log(data_blob)
+//                console.log(data_blob)
                 load_text_file(data_blob, import_files_url_from_csv);
                 annotation = "annotated" + pk
             },

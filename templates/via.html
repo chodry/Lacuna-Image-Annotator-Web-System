@@ -200,7 +200,8 @@
             <ul>
               {% for load in query2 %}
                   {% csrf_token %}
-                  <li id="query2" value="{{ load.pk }}">{{ load.url }}</li>
+<!--                  <li id="query2" value="{{ load.pk }}">{{ load.url }}</li>-->
+                  <li class="query2" id="query2" value="{{ load.pk }}">{{ load.url }}</li>
                 {% endfor %}
             </ul>
           </li>
