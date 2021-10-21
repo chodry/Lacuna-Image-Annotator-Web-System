@@ -10178,15 +10178,9 @@ $(document).ready(function () {
 
 });
 
-//var going = JSON.parse(document.getElementById('going').textContent);
-//console.log(going)
-//
-//var filing = document.getElementById('my_file').textContent
-//console.log(filing)
-
 $(document).ready(function () {
 
-    $("#query").click(function () {
+    $(".query").click(function () {
         $.ajaxSetup({
             headers: {
                 "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
@@ -10212,7 +10206,7 @@ $(document).ready(function () {
             success: function (resp) {
                 console.log("pk posted successfully");
                 var upload = resp.upload
-//                console.log(upload);
+                console.log(upload);
                 var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
                 data_blob.name = folder + ".json"
 //                console.log(data_blob)
@@ -10272,3 +10266,104 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).ready(function () {
+
+    $("#save").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+        var type = 'json'
+        var file_extension = type;
+        pack_via_metadata(type).then( function(data) {
+            var blob_attr = {type: 'text/'+file_extension+';charset=utf-8'};
+            var all_region_data_blob = new Blob(data, blob_attr);
+
+            var filename = 'via_export';
+            if(typeof(_via_settings) !== 'undefined' &&
+               _via_settings.hasOwnProperty('project') &&
+               _via_settings['project']['name'] !== '') {
+              filename = _via_settings['project']['name'];
+            }
+            if ( file_extension !== 'csv' || file_extension !== 'json' ) {
+              filename += '.' + file_extension;
+            }
+            if(folder=='lacuna'){
+               show_message('Please first Load a file before you save it');
+            }
+            else {
+                var formData = new FormData();
+                formData.append('mydata', all_region_data_blob)
+                formData.append('fileName', filename)
+                formData.append('file', folder)
+                formData.append('action', 'upload4')
+
+                $.ajax({
+                    method: 'POST',
+                    url: "/annotation/",
+                    data: formData,
+                    processData: false,
+                    contentType : false,
+                    success: function (resp) {
+                         show_message('File Saved Successfully');
+                    },
+                    error: function (error) {
+                       show_message("File wasn't Saved, Please try again");
+                    }
+                });
+            }
+
+//            save_data_to_local_file(all_region_data_blob, filename);
+        }.bind(this), function(err) {
+            show_message('Failed to download data: [' + err + ']');
+        }.bind(this));
+
+    });
+
+});
+
+$(document).ready(function () {
+
+    $(".query3").click(function () {
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+        var pk = $(this).val();
+        folder = $(this).text();
+
+        var formData = new FormData();
+        formData.append('pk', pk)
+        formData.append('action', 'upload5')
+
+        $.ajax({
+            method: 'POST',
+            url: "/annotation/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function (resp) {
+                console.log("pk posted successfully");
+                var upload = resp.upload
+                console.log(upload)
+                var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
+                data_blob.name = folder + ".json"
+                load_text_file(data_blob, import_annotations_from_json);
+//                annotation = "review" + pk
+            },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
+
+});
+
+

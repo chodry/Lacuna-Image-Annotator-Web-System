@@ -81,3 +81,12 @@ class Upload(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class SavedUpload(models.Model):
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    annotator = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
+    saved = models.FileField(upload_to='media')
+
+    def __str__(self):
+        return self.upload.url

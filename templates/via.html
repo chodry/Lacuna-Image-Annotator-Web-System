@@ -200,7 +200,6 @@
             <ul>
               {% for load in query2 %}
                   {% csrf_token %}
-<!--                  <li id="query2" value="{{ load.pk }}">{{ load.url }}</li>-->
                   <li class="query2" id="query2" value="{{ load.pk }}">{{ load.url }}</li>
                 {% endfor %}
             </ul>
@@ -211,8 +210,16 @@
 <!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->
                 {% for review in querying %}
                   {% csrf_token %}
-                  <li id="query" value="{{ review.pk }}">{{ review.url }}</li>
+                  <li class="query" value="{{ review.pk }}">{{ review.url }}</li>
                 {% endfor %}
+            </ul>
+          </li>
+          <li>Incomplete Files
+            <ul>
+              {% for save in saved %}
+                {% csrf_token %}
+                <li class="query3" value="{{ save.pk }}">{{ save.upload.url }}</li>
+              {% endfor %}
             </ul>
           </li>
         </ul>
@@ -220,6 +227,8 @@
 
       <!-- Shortcut toolbar -->
       <div class="toolbar">
+        {% csrf_token %}
+        <svg id="save" viewbox="0 0 24 24"><use xlink:href="#icon_fileupload"></use><title>Save Project To The Server</title></svg>
         <svg onclick="project_open_select_project_file()" viewbox="0 0 24 24"><use xlink:href="#icon_open"></use><title>Open Project</title></svg>
         <svg onclick="project_save_with_confirm()" viewbox="0 0 24 24"><use xlink:href="#icon_save"></use><title>Save Project</title></svg>
         <svg onclick="settings_panel_toggle()" viewbox="0 0 24 24"><use xlink:href="#icon_settings"></use><title>Update Project Settings</title></svg>

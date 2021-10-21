@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Country, Leader, Annotator, Upload
+from .models import *
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
@@ -23,3 +23,4 @@ admin.site.register(Country)
 admin.site.register(Leader)
 admin.site.register(Annotator)
 admin.site.register(Upload)
+admin.site.register(SavedUpload)

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Country, Upload, Leader, Annotator, CustomUser
+from .models import *
 from django.urls import reverse_lazy
 from .forms import LeaderModelForm, AnnotatorModelForm, AssignAnnotatorForm, AssignAnnotatorForm2
 from django.core.mail import send_mail, EmailMultiAlternatives
@@ -313,6 +313,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
     template_name = 'via.html'
 
     def get_context_data(self, **kwargs):
+        # SavedUpload.objects.all().delete()
         upload = self.request.user.country
         assigned = self.request.user.annotator
         queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
@@ -337,6 +338,8 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
             query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
             query2 = queryset.filter(is_annotated=False)
 
+        saved = SavedUpload.objects.filter(annotator=assigned)
+
         context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
         context.update({
@@ -346,6 +349,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
             "john": john,
             "querying": query,
             "query2": query2,
+            "saved": saved,
             # "going": going,
         })
 
@@ -399,7 +403,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                     f = open('media_cdn/' + json_file, 'r')
                     json_data = json.load(f)
 
-            else:
+            elif request.POST.get('action') == 'upload3':
                 pk = request.POST.get('pk')
                 query = Upload.objects.get(id=pk)
                 text_file = query.adminUpload.name
@@ -407,6 +411,36 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                 data = f.read()
                 print(data)
                 json_data = data
+
+            elif request.POST.get('action') == 'upload4':
+                blob = request.FILES.get('mydata')
+                fileName = request.POST.get('fileName')
+                folder = request.POST.get('file')
+
+                assigned = self.request.user.annotator
+
+                # path = default_storage.save('media/' + fileName, blob)
+                # pk = Upload.objects.get(url=folder)
+                # SavedUpload.objects.create(upload=pk, annotator=assigned, saved=path)
+
+                pk = Upload.objects.get(url=folder)
+                saved = SavedUpload.objects.filter(upload=pk).filter(annotator=assigned)
+                if saved.exists():
+                    path = default_storage.save('media/' + fileName, blob)
+                    saved.update(saved=path)
+                else:
+                    path = default_storage.save('media/' + fileName, blob)
+                    pk = Upload.objects.get(url=folder)
+                    SavedUpload.objects.create(upload=pk, annotator=assigned, saved=path)
+
+                json_data = "data"
+
+            else:
+                pk = request.POST.get('pk')
+                query = SavedUpload.objects.get(id=pk)
+                json_file = query.saved.name
+                f = open('media_cdn/' + json_file, 'r')
+                json_data = json.load(f)
 
             my_context = {
                 "upload": json_data
