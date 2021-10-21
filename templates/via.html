@@ -218,7 +218,7 @@
             <ul>
               {% for save in saved %}
                 {% csrf_token %}
-                <li class="query3" value="{{ save.pk }}">{{ save.upload.url }}</li>
+                <li class="query3" value="{{ save.pk }}" name="{{ save.annotation }}">{{ save.upload.url }}</li>
               {% endfor %}
             </ul>
           </li>

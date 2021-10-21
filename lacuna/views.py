@@ -362,15 +362,18 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                 fileName = request.POST.get('fileName')
                 folder = request.POST.get('file')
                 annotation = request.POST.get('annotated')
+
+                assigned = self.request.user.annotator
+
                 path = default_storage.save('media/' + fileName + ".json", blob)
-                # url = Upload.objects.get(url=folder)
+                url = Upload.objects.get(url=folder)
+
                 if annotation == "first":
                     Upload.objects.filter(url=folder).update(is_annotated=True, annotatorUpload=path)
                 elif annotation == "second":
                     Upload.objects.filter(url=folder).update(is_annotated2=True, annotatorUpload_2=path)
                 elif annotation.startswith('review'):
                     pk = annotation.replace("review", "")
-                    assigned = self.request.user.annotator
                     upload = Upload.objects.filter(id=pk)
 
                     if assigned.annotate_all:
@@ -379,13 +382,16 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                         upload.update(annotatorUpload=path, annotatorUpdate=True)
                 else:
                     pk = annotation.replace("annotated", "")
-                    assigned = self.request.user.annotator
                     upload = Upload.objects.filter(id=pk)
 
                     if assigned.annotate_all:
                         upload.update(annotatorUpload_2=path, is_annotated2=True)
                     else:
                         upload.update(annotatorUpload=path, is_annotated=True)
+
+                saved = SavedUpload.objects.filter(upload__url=folder).filter(annotator=assigned)
+                if saved.exists():
+                    saved.delete()
 
                 json_data = "uploaded"
 
@@ -409,13 +415,13 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                 text_file = query.adminUpload.name
                 f = open('media_cdn/' + text_file, 'r')
                 data = f.read()
-                print(data)
                 json_data = data
 
             elif request.POST.get('action') == 'upload4':
                 blob = request.FILES.get('mydata')
                 fileName = request.POST.get('fileName')
                 folder = request.POST.get('file')
+                annotation = request.POST.get('annotation')
 
                 assigned = self.request.user.annotator
 
@@ -431,7 +437,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                 else:
                     path = default_storage.save('media/' + fileName, blob)
                     pk = Upload.objects.get(url=folder)
-                    SavedUpload.objects.create(upload=pk, annotator=assigned, saved=path)
+                    SavedUpload.objects.create(upload=pk, annotator=assigned, annotation=annotation, saved=path)
 
                 json_data = "data"
 

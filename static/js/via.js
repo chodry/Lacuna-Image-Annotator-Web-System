@@ -10164,10 +10164,8 @@ $(document).ready(function () {
             processData: false,
             contentType : false,
             success: function (resp) {
-                 console.log("File posted successfully");
-//                 dat = resp.upload
-//                 console.log(dat)
                  document.querySelector(".popup").style.display = "none";
+                 show_message('File Uploaded Successfully');
             },
             error: function (error) {
                 console.log("Error");
@@ -10299,6 +10297,7 @@ $(document).ready(function () {
                 formData.append('mydata', all_region_data_blob)
                 formData.append('fileName', filename)
                 formData.append('file', folder)
+                formData.append('annotation', annotation)
                 formData.append('action', 'upload4')
 
                 $.ajax({
@@ -10336,6 +10335,7 @@ $(document).ready(function () {
         });
 
         var pk = $(this).val();
+        annotation = $(this).attr("name");
         folder = $(this).text();
 
         var formData = new FormData();
@@ -10355,7 +10355,6 @@ $(document).ready(function () {
                 var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
                 data_blob.name = folder + ".json"
                 load_text_file(data_blob, import_annotations_from_json);
-//                annotation = "review" + pk
             },
             error: function (error) {
                 console.log("Error");

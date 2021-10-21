@@ -86,6 +86,7 @@ class Upload(models.Model):
 class SavedUpload(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     annotator = models.ForeignKey(Annotator, null=True, blank=True, on_delete=models.SET_NULL)
+    annotation = models.CharField(max_length=255, blank=True, null=True)
     saved = models.FileField(upload_to='media')
 
     def __str__(self):
