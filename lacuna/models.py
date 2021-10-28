@@ -78,6 +78,8 @@ class Upload(models.Model):
     annotator2Update = models.BooleanField(default=False)
     annotatorUpload = models.FileField(upload_to='media', blank=True)
     last_updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    annotator1_comment = models.TextField(null=True, blank=True)
+    annotator2_comment = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.url

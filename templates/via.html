@@ -166,7 +166,11 @@
       <!-- menu bar -->
       <div class="menubar">
         <ul>
+          {% if request.user.is_annotator %}
           <li><a href="{% url 'annotators_home' %}">Dashboard</a></li>
+          {% elif request.user.is_leader %}
+          <li><a href="{% url 'upload_list' %}">Dashboard</a></li>
+          {% endif %}
           <li>Project
             <ul>
               <li onclick="project_open_select_project_file()" title="Load a VIA project (from a JSON file)">Load</li>
@@ -196,41 +200,64 @@
             </ul>
           </li>
 
-          <li>Load Files
-            <ul>
-              {% for load in query2 %}
-                  {% csrf_token %}
-                  <li class="query2" id="query2" value="{{ load.pk }}">{{ load.url }}</li>
-                {% endfor %}
-            </ul>
-          </li>
+          {% if request.user.is_annotator %}
+              <li>Load Files
+                <ul>
+                  {% for load in query2 %}
+                      {% csrf_token %}
+                      <li class="query2" id="query2" value="{{ load.pk }}">{{ load.url }}</li>
+                    {% endfor %}
+                </ul>
+              </li>
 
-          <li>Annotations to Review
-            <ul>
-<!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->
-                {% for review in querying %}
-                  {% csrf_token %}
-                  <li class="query" value="{{ review.pk }}">{{ review.url }}</li>
-                {% endfor %}
-            </ul>
-          </li>
-          <li>Incomplete Files
-            <ul>
-              {% for save in saved %}
-                {% csrf_token %}
-                <li class="query3" value="{{ save.pk }}" name="{{ save.annotation }}">{{ save.upload.url }}</li>
-              {% endfor %}
-            </ul>
-          </li>
+              <li>Annotations to Review
+                <ul>
+    <!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->
+                    {% for review in querying %}
+                      {% csrf_token %}
+                      <li class="query" value="{{ review.pk }}">{{ review.url }}</li>
+                    {% endfor %}
+                </ul>
+              </li>
+              <li>Incomplete Files
+                <ul>
+                  {% for save in saved %}
+                    {% csrf_token %}
+                    <li class="query3" value="{{ save.pk }}" name="{{ save.annotation }}">{{ save.upload.url }}</li>
+                  {% endfor %}
+                </ul>
+              </li>
+          {% elif request.user.is_leader %}
+              <li>Lead Annotator
+                <ul>
+                  {% for lead in leads %}
+                   {% csrf_token %}
+                    <li class="query4" value="{{ lead.pk }}">{{ lead.url }}</li>
+                  {% endfor %}
+                </ul>
+              </li>
+              <li>Other Annotators
+                  <ul>
+                    {% for lead in leadXs %}
+                     {% csrf_token %}
+                      <li class="query5" value="{{ lead.pk }}">{{ lead.url }}</li>
+                    {% endfor %}
+                  </ul>
+              </li>
+          {% endif %}
         </ul>
       </div> <!-- end of menubar -->
 
       <!-- Shortcut toolbar -->
       <div class="toolbar">
         {% csrf_token %}
-        <svg id="save" viewbox="0 0 24 24"><use xlink:href="#icon_fileupload"></use><title>Save Project To The Server</title></svg>
+        {% if request.user.is_annotator %}
+          <svg id="save" viewbox="0 0 24 24"><use xlink:href="#icon_fileupload"></use><title>Save Project To The Server</title></svg>
+          <svg onclick="project_save_with_confirm()" viewbox="0 0 24 24"><use xlink:href="#icon_save"></use><title>Save Project</title></svg>
+        {% elif request.user.is_leader %}
+          <svg onclick="project_save_with_confirm()" viewbox="0 0 24 24"><use xlink:href="#icon_save"></use><title>Submit Feedback and Save Annotations</title></svg>
+        {% endif %}
         <svg onclick="project_open_select_project_file()" viewbox="0 0 24 24"><use xlink:href="#icon_open"></use><title>Open Project</title></svg>
-        <svg onclick="project_save_with_confirm()" viewbox="0 0 24 24"><use xlink:href="#icon_save"></use><title>Save Project</title></svg>
         <svg onclick="settings_panel_toggle()" viewbox="0 0 24 24"><use xlink:href="#icon_settings"></use><title>Update Project Settings</title></svg>
         <!--
         <svg onclick="" viewbox="0 0 24 24"><use xlink:href="#icon_checkbox"></use><title>Locate Files</title></svg>
@@ -735,12 +762,28 @@ POSSIBILITY OF SUCH DAMAGE.
      <div class="popup">
       <div class="popup_content">
         <img src="{% static 'images/close.jpg' %}" alt="Close" class="close">
+         {% if request.user.is_annotator %}
+            <div class="message">
+              <p>Please click the 'Upload File' button below to submit your annotations</p>
+            </div>
+            {% csrf_token %}
+            <button class="butt" id="upload">Upload File</button>
+         {% elif request.user.is_leader %}
+            <div class="message2">
+              <span>Please provide your feedback to the loaded Annotations</span>
+              <div class="line"></div>
+              <div class="radios">
+                <button class="popup-btn" id="good">Good Annotations</button>
+                <button class="popup-btn" id="bad">Bad Annotations</button>
+              </div>
+              <div class="notes">
+                 <textarea id="story" name="story" rows="4" cols="55" placeholder="Please additional information for Bad Annotations"></textarea>
+              </div>
 
-        <div class="message">
-          <p>Please click the 'Upload File' button below to submit your annotations</p>
-        </div>
-        {% csrf_token %}
-        <button class="butt" id="upload">Upload File</button>
+               <button class="popup-btn2" id="annotate-btn">Submit</button>
+            </div>
+         {% endif %}
+
       </div>
     </div>
 

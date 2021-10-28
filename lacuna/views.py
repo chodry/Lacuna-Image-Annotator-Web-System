@@ -315,43 +315,64 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         # SavedUpload.objects.all().delete()
         upload = self.request.user.country
-        assigned = self.request.user.annotator
-        queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
-        queryset2 = queryset.filter(is_annotated=True)
-        queryset3 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
-        queryset4 = queryset3.filter(is_annotated2=True)
+        loggedIn = self.request.user
+        username = loggedIn.username
 
-        # going = queryset4.first()
-        # nex = json.dumps(str(going))
-        # f = open('media_cdn/media/matty_8Jul2021_9h22m.json', 'r')
-        # man = f.read()
+        if loggedIn.is_leader:
+            lead_annotator = Annotator.objects.filter(leader=loggedIn.leader).filter(annotate_all=True).first()
+            lead_annotations = Upload.objects.filter(annotator_2=lead_annotator).filter(is_annotated2=True)\
+                .filter(annotated2_right__exact='')
+            lead_annotations2 = Upload.objects.filter(annotator_2=lead_annotator).filter(is_annotated2=True) \
+                .filter(annotated2_right='Bad Annotations').filter(annotator2Update=True)
+            lead = lead_annotations | lead_annotations2
 
-        chodrine = generateList(queryset)
-        mutebi = generateList(queryset2)
-        musisi = generateList(queryset3)
-        john = generateList(queryset4)
+            lead_annotationsX = Upload.objects.filter(leader=username).filter(is_annotated=True)\
+                .filter(annotated_right__exact='')
+            lead_annotations2X = Upload.objects.filter(leader=username).filter(is_annotated=True)\
+                .filter(annotated_right='Bad Annotations')\
+                .filter(annotatorUpdate=True)
+            leadX = lead_annotationsX | lead_annotations2X
 
-        if assigned.annotate_all:
-            query = queryset4.filter(annotator2Update=False).filter(annotated2_right='Bad Annotations')
-            query2 = queryset3.filter(is_annotated2=False)
-        else:
-            query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
-            query2 = queryset.filter(is_annotated=False)
+            context = super(AnnotatorPageView, self).get_context_data(**kwargs)
 
-        saved = SavedUpload.objects.filter(annotator=assigned)
+            context.update({
+                "leads": lead,
+                "leadXs": leadX,
+            })
 
-        context = super(AnnotatorPageView, self).get_context_data(**kwargs)
+        elif loggedIn.is_annotator:
+            assigned = self.request.user.annotator
+            queryset = Upload.objects.filter(country=upload).filter(assigned=assigned)
+            queryset2 = queryset.filter(is_annotated=True)
+            queryset3 = Upload.objects.filter(country=upload).filter(annotator_2=assigned)
+            queryset4 = queryset3.filter(is_annotated2=True)
 
-        context.update({
-            "cass": chodrine,
-            "maz": mutebi,
-            "anno": musisi,
-            "john": john,
-            "querying": query,
-            "query2": query2,
-            "saved": saved,
-            # "going": going,
-        })
+            chodrine = generateList(queryset)
+            mutebi = generateList(queryset2)
+            musisi = generateList(queryset3)
+            john = generateList(queryset4)
+
+            if assigned.annotate_all:
+                query = queryset4.filter(annotator2Update=False).filter(annotated2_right='Bad Annotations')
+                query2 = queryset3.filter(is_annotated2=False)
+            else:
+                query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
+                query2 = queryset.filter(is_annotated=False)
+
+            saved = SavedUpload.objects.filter(annotator=assigned)
+
+            context = super(AnnotatorPageView, self).get_context_data(**kwargs)
+
+            context.update({
+                "cass": chodrine,
+                "maz": mutebi,
+                "anno": musisi,
+                "john": john,
+                "querying": query,
+                "query2": query2,
+                "saved": saved,
+                # "going": going,
+            })
 
         return context
 
@@ -441,10 +462,47 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
 
                 json_data = "data"
 
-            else:
+            elif request.POST.get('action') == 'upload5':
                 pk = request.POST.get('pk')
                 query = SavedUpload.objects.get(id=pk)
                 json_file = query.saved.name
+                f = open('media_cdn/' + json_file, 'r')
+                json_data = json.load(f)
+
+            elif request.POST.get('action') == 'upload6':
+                pk = request.POST.get('pk')
+                query = Upload.objects.get(id=pk)
+
+                json_file = query.annotatorUpload_2.name
+                f = open('media_cdn/' + json_file, 'r')
+                json_data = json.load(f)
+
+            elif request.POST.get('action') == 'upload7':
+                blob = request.FILES.get('mydata')
+                fileName = request.POST.get('fileName')
+                leader = request.POST.get('leader')
+                message = request.POST.get('message')
+                annotation = request.POST.get('annotation')
+
+                if annotation.startswith("leader"):
+                    pk = annotation.replace("leader", "")
+                    upload = Upload.objects.filter(id=pk)
+                    path = default_storage.save('media/' + fileName + ".json", blob)
+                    upload.update(annotatorUpload_2=path, annotated2_right=leader, annotator2_comment=message)
+                    json_data = "uploaded"
+
+                elif annotation.startswith("admin"):
+                    pk = annotation.replace("admin", "")
+                    upload = Upload.objects.filter(id=pk)
+                    path = default_storage.save('media/' + fileName + ".json", blob)
+                    upload.update(annotatorUpload=path, annotated_right=leader, annotator1_comment=message)
+                    json_data = "uploaded"
+
+            else:
+                pk = request.POST.get('pk')
+                query = Upload.objects.get(id=pk)
+
+                json_file = query. annotatorUpload.name
                 f = open('media_cdn/' + json_file, 'r')
                 json_data = json.load(f)
 

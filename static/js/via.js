@@ -1,5 +1,5 @@
 "use strict";
-
+var leader = 'lacuna'
 var VIA_VERSION      = '2.0.10';
 var VIA_NAME         = 'VGG Image Annotator';
 var VIA_SHORT_NAME   = 'VIA';
@@ -10364,5 +10364,199 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).ready(function () {
+
+    $(".query4").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+//         var pk = document.getElementById('query').value
+//         folder = document.getElementById('query').textContent
+         var pk = $(this).val();
+         folder = $(this).text();
+//         console.log(pk)
+
+        var formData = new FormData();
+        formData.append('pk', pk)
+        formData.append('action', 'upload6')
+
+        $.ajax({
+            method: 'POST',
+            url: "/annotation/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function (resp) {
+                console.log("pk posted successfully");
+                var upload = resp.upload
+                console.log(upload);
+                var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
+                data_blob.name = folder + ".json"
+//                console.log(data_blob)
+                load_text_file(data_blob, project_open_parse_json_file);
+                annotation = "leader" + pk
+            },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
+
+});
+
+$(document).ready(function () {
+
+    $("#good").click(function () {
+
+        var goodBtn = document.getElementById("good")
+        var badBtn = document.getElementById("bad")
+
+        var color = $('#good').css("background-color");
+        var rgbb = "rgb(255, 255, 255)"  //white
+        if(color == rgbb){
+            goodBtn.style = `color: #fff;
+                            background-color: #212121;
+                            border: 2px solid #212121;`
+
+            badBtn.style = `color: #212121;
+                            background-color: #fff;
+                            border: 2px solid #e6e6e6;`
+
+            leader = "Good Annotations"
+        }else {
+            goodBtn.style = `color: #212121;
+                            background-color: #fff;
+                            border: 2px solid #e6e6e6;`
+
+            leader = "lacuna"
+        }
+
+    });
+
+});
+
+$(document).ready(function () {
+
+    $("#bad").click(function () {
+
+        var goodBtn = document.getElementById("good")
+        var badBtn = document.getElementById("bad")
+
+        var color = $('#bad').css("background-color");
+        var rgbb = "rgb(255, 255, 255)"  //white
+        if(color == rgbb){
+            badBtn.style = `color: #fff;
+                            background-color: #212121;
+                            border: 2px solid #212121;`
+
+            goodBtn.style = `color: #212121;
+                            background-color: #fff;
+                            border: 2px solid #e6e6e6;`
+
+            leader = "Bad Annotations"
+        }else {
+            badBtn.style = `color: #212121;
+                            background-color: #fff;
+                            border: 2px solid #e6e6e6;`
+
+            leader = "lacuna"
+        }
+
+    });
+
+});
+
+$(document).ready(function () {
+
+    $("#annotate-btn").click(function () {
+
+        var message = $('textarea#story').val();
+
+        if (leader == 'lacuna'){
+            show_message('Please select if the Annotations are good or bad');
+        }else {
+            if(!message && leader == "Bad Annotations"){
+                show_message('Please provide some additional text to support your decision');
+            }else {
+                var formData = new FormData();
+                formData.append('mydata', data_blob)  // Add blob to form data
+                formData.append('fileName', fileUpload)
+                formData.append('leader', leader)
+                formData.append('message', message)
+                formData.append('annotation', annotation)
+                formData.append('action', 'upload7')
+
+                 $.ajax({
+                    method: 'POST',
+                    url: "/annotation/",
+                    data: formData,
+                    processData: false,
+                    contentType : false,
+                    success: function (resp) {
+                         document.querySelector(".popup").style.display = "none";
+                         show_message('File Uploaded Successfully');
+                    },
+                    error: function (error) {
+                        console.log("Error");
+                    }
+                });
+
+            }
+        }
+
+    });
+
+});
+
+$(document).ready(function () {
+
+    $(".query5").click(function () {
+        $.ajaxSetup({
+            headers: {
+                "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        });
+
+//         var pk = document.getElementById('query').value
+//         folder = document.getElementById('query').textContent
+         var pk = $(this).val();
+         folder = $(this).text();
+//         console.log(pk)
+
+        var formData = new FormData();
+        formData.append('pk', pk)
+        formData.append('action', 'upload8')
+
+        $.ajax({
+            method: 'POST',
+            url: "/annotation/",
+            data: formData,
+            processData: false,
+            contentType : false,
+            success: function (resp) {
+                console.log("pk posted successfully");
+                var upload = resp.upload
+                console.log(upload);
+                var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
+                data_blob.name = folder + ".json"
+//                console.log(data_blob)
+                load_text_file(data_blob, project_open_parse_json_file);
+                annotation = "admin" + pk
+            },
+            error: function (error) {
+                console.log("Error");
+            }
+        });
+
+    });
+
+});
+
+
 
 

@@ -231,7 +231,7 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
 }
 
 .popup_content {
-  height: 250px;
+  height: 300px;
   width: 500px;
   background: #fff;
   padding: 20px;
@@ -278,3 +278,46 @@ ul.region_shape .selected { fill:#ffffff; stroke:#ff0000; }
 .message {
   margin-top: 50px;
  }
+
+ .line {
+    height: 2px;
+    background-color: #e6e6e6;
+    width: 100%
+ }
+
+ .radios {
+    width: 100%;
+    margin-top: 10px;
+ }
+
+ .popup-btn {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    border: 2px solid #e6e6e6;
+    margin: 10px;
+    font-size: 12px;
+    padding: 5px;
+ }
+
+ .popup-btn2 {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    border: 2px solid #e6e6e6;
+    margin: 10px;
+    font-size: 12px;
+    padding: 5px;
+ }
+
+ .popup-btn2:hover {
+  background-color: #212121;
+  border: 2px solid #212121;
+  color: white;
+}
+
+textarea {
+   font-size: 13px;
+   border-radius: 5px;
+   border: 2px solid #e6e6e6;
+}
