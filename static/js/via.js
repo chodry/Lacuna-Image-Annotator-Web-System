@@ -10490,7 +10490,7 @@ $(document).ready(function () {
             show_message('Please select if the Annotations are good or bad');
         }else {
             if(!message && leader == "Bad Annotations"){
-                show_message('Please provide some additional text to support your decision');
+                show_message('Please provide some additional information to support your decision');
             }else {
                 var formData = new FormData();
                 formData.append('mydata', data_blob)  // Add blob to form data
