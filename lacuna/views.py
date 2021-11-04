@@ -355,9 +355,11 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
             if assigned.annotate_all:
                 query = queryset4.filter(annotator2Update=False).filter(annotated2_right='Bad Annotations')
                 query2 = queryset3.filter(is_annotated2=False)
+                annotate_all = assigned.annotate_all
             else:
                 query = queryset2.filter(annotatorUpdate=False).filter(annotated_right='Bad Annotations')
                 query2 = queryset.filter(is_annotated=False)
+                annotate_all = assigned.annotate_all
 
             saved = SavedUpload.objects.filter(annotator=assigned)
 
@@ -371,6 +373,7 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                 "querying": query,
                 "query2": query2,
                 "saved": saved,
+                "annotate_all": annotate_all,
                 # "going": going,
             })
 
@@ -489,6 +492,8 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                     upload = Upload.objects.filter(id=pk)
                     path = default_storage.save('media/' + fileName + ".json", blob)
                     upload.update(annotatorUpload_2=path, annotated2_right=leader, annotator2_comment=message)
+                    if leader == "Bad Annotations":
+                        upload.update(annotator2Update=False)
                     json_data = "uploaded"
 
                 elif annotation.startswith("admin"):
@@ -496,6 +501,8 @@ class AnnotatorPageView(LoginRequiredMixin, ListView):
                     upload = Upload.objects.filter(id=pk)
                     path = default_storage.save('media/' + fileName + ".json", blob)
                     upload.update(annotatorUpload=path, annotated_right=leader, annotator1_comment=message)
+                    if leader == "Bad Annotations":
+                        upload.update(annotatorUpdate=False)
                     json_data = "uploaded"
 
             else:

@@ -7236,6 +7236,10 @@ document.querySelector(".close").addEventListener("click", function(){
       document.querySelector(".popup").style.display = "none";
 })
 
+document.querySelector(".close2").addEventListener("click", function(){
+      document.querySelector(".popup2").style.display = "none";
+})
+
 function project_open_select_project_file() {
   if (invisible_file_input) {
     invisible_file_input.accept = '.json';
@@ -10189,7 +10193,11 @@ $(document).ready(function () {
 //         folder = document.getElementById('query').textContent
          var pk = $(this).val();
          folder = $(this).text();
-//         console.log(url)
+         var comment = $(this).attr("name");
+         var popup2 = document.querySelector(".popup2")
+
+         $('#story2').val(comment);
+//         console.log(comment)
 
         var formData = new FormData();
         formData.append('pk', pk)
@@ -10204,11 +10212,12 @@ $(document).ready(function () {
             success: function (resp) {
                 console.log("pk posted successfully");
                 var upload = resp.upload
-                console.log(upload);
+//                console.log(upload);
                 var data_blob = new Blob( [JSON.stringify(upload)], {type: 'text/json;charset=utf-8'});
                 data_blob.name = folder + ".json"
 //                console.log(data_blob)
                 load_text_file(data_blob, project_open_parse_json_file);
+                popup2.style.display = "flex";
                 annotation = "review" + pk
             },
             error: function (error) {
@@ -10500,6 +10509,7 @@ $(document).ready(function () {
                     success: function (resp) {
                          document.querySelector(".popup").style.display = "none";
                          show_message('File Uploaded Successfully');
+                         $('#story').val('');
                     },
                     error: function (error) {
                         console.log("Error");

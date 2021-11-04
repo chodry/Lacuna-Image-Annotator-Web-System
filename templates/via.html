@@ -1,5 +1,4 @@
 {% load static %}
-<!<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -215,7 +214,11 @@
     <!--              <li><a href="{% url 'logout' %}">Logout</a></li>-->
                     {% for review in querying %}
                       {% csrf_token %}
-                      <li class="query" value="{{ review.pk }}">{{ review.url }}</li>
+                        {% if annotate_all %}
+                            <li class="query" value="{{ review.pk }}" name="{{ review.annotator2_comment }}">{{ review.url }}</li>
+                        {% else %}
+                             <li class="query" value="{{ review.pk }}" name="{{ review.annotator1_comment }}">{{ review.url }}</li>
+                        {% endif%}
                     {% endfor %}
                 </ul>
               </li>
@@ -783,6 +786,20 @@ POSSIBILITY OF SUCH DAMAGE.
                <button class="popup-btn2" id="annotate-btn">Submit</button>
             </div>
          {% endif %}
+
+      </div>
+    </div>
+
+    <div class="popup2">
+      <div class="popup_content">
+        <img src="{% static 'images/close.jpg' %}" alt="Close" class="close2">
+            <div class="message2">
+              <span>Here is the feedback for your Annotations</span>
+              <div class="line"></div>
+              <div class="notes2">
+                 <textarea id="story2" name="story" rows="10" cols="55" placeholder="Please additional information for Bad Annotations"></textarea>
+              </div>
+            </div>
 
       </div>
     </div>
